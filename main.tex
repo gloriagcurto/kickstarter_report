@@ -1,209 +1,125 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% Template for DataScientest final project
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\documentclass[a4paper]{article}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Sets the document class for the document
-% Open any is added to remove the book style of starting every new chapter on an odd page (not needed for reports)
-\documentclass[10pt,english, openany]{book}
+\documentclass{article}
+\usepackage[a4paper]{geometry}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Loading packages that alter the style
-\usepackage[]{graphicx}
-\usepackage[]{color}
-\usepackage{alltt}
-\usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
-\setcounter{secnumdepth}{3}
-\setcounter{tocdepth}{3}
-%\setlength{\parskip}{\smallskipamount} %Default
-\setlength{\parindent}{4em}
-\setlength{\parskip}{1em}
-\renewcommand{\linespread}{1.3}
-%\setlength{\parindent}{0pt} %Default
+\usepackage{import}
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage{float} 
+\usepackage{xcolor}
+\usepackage{subfigure}
+\usepackage{caption}
+\usepackage{listings} % JSON listing
+\usepackage{eurosym}
+\usepackage{parskip} % Do not indent the beginning of each paragraph
+\usepackage{comment}
+
+%\renewcommand{\sectionname}{Lecture} % Redefine "chapter" to a different text
+
+\newcommand{\ToDo}[1]{\textcolor{magenta}{\textbf{[ToDo]} \textbf{#1}}}
+\newcommand{\miguel}[1]{\textcolor{blue}{[Miguel] {#1}}}
 
 
-% Set page margins
-\usepackage[top=100pt,bottom=100pt,left=68pt,right=66pt]{geometry}
+\title{Classification of Kickstarter's successful or failed projects based on data crawled by a scraper robot (Web Robots)}
+\author{Gloria GONZÁLEZ CURTO}
+\date{\today}
 
-% Package used for placeholder text
-\usepackage{lipsum}
-
-% Prevents LaTeX from filling out a page to the bottom
-\raggedbottom
-
-% Adding both languages
-\usepackage[english, french]{babel}
-
-% All page numbers positioned at the bottom of the page
-\usepackage{fancyhdr}
-\fancyhf{} % clear all header and footers
-\fancyfoot[C]{\thepage}
-\renewcommand{\headrulewidth}{0pt} % remove the header rule
-\pagestyle{fancy}
-
-% Changes the style of chapter headings
-\usepackage{titlesec}
-\titleformat{\chapter}
-   {\normalfont\LARGE\bfseries}{\thechapter.}{1em}{}
-% Change distance between chapter header and text
-\titlespacing{\chapter}{5pt}{50pt}{2\baselineskip}
-
-% Adds table captions above the table per default
-\usepackage{float}
-\floatstyle{plaintop}
-\restylefloat{table}
-
-% Adds space between caption and table
-\usepackage[tableposition=top]{caption}
-
-% Adds hyperlinks to references and ToC
-\usepackage{hyperref}
-\hypersetup{hidelinks,linkcolor = black} % Changes the link color to black and hides the hideous red border that usually is created
-
-% If multiple images are to be added, a folder (path) with all the images can be added here 
-\graphicspath{ {figures/} }
-
-% Separates the first part of the report/thesis in Roman numerals
-\frontmatter
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Starts the document
 \begin{document}
 
-%%% Selects the language to be used for the first couple of pages
-\selectlanguage{english}
+\maketitle
 
-%%%%% Adds the title page
-\begin{titlepage}
-	\clearpage\thispagestyle{empty}
-	\renewcommand{\linespread}{1.6}
-	\centering
-	\vspace{1cm}
+\tableofcontents
 
-	% Titles
-	% Information about the University
-%	{\normalsize Fluidodinamica Computazionale \\ 
-%		Dipartimento di Scienze e Tecnologie Aerospaziali \\
-%		Politecnico di Milano \par}
-		\vspace{4cm}
-	{\Huge \textbf{Classification of Kickstarter's successful or failed projects based on data crawled by a scraper robot (Web Robots}} \\
-	\vspace{7cm}
-	{\large \textbf{Gloria GONZÁLEZ CURTO} \par}
-	%\vspace{4cm}
-	%{\normalsize Gloria GONZÁLEZ CURTO \par}
-	\vspace{4cm}
-    
-    \centering \includegraphics[scale=0.2]{logo1.png}
-    
-    \vspace{0.5cm}
-		
-	% Set the date
-	{\normalsize April 2020 \par}
-	
-	\pagebreak
 
-\end{titlepage}
+\section{Summary}
+\label{ref:sum}
+The aim of this project is to classify and ultimately predict the success or failure of a kickstarter fund rising campaign based on data monthly crawled from the kickstarter.com web site by a scraper robot (webrobots.io).
 
-% Adds a table of contents
-\tableofcontents{}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%% Text body starts here!
-\mainmatter
-
-\chapter{Summary}\label{chapt:sum}
-\textit{The aim of this project is to classify and ultimately predict the success or failure of a kickstarter found rising campaign based on data monthly crawled from the kickstarter.com web site by a scraper robot (webrobots.io)}
-\chapter{Problem definition and background}
-{Kickstarter is an American corporation with a public benefit status launched in 2009 in the United States. The company initiated its international expansion in 2012. The kickstarter platform is open to backers from anywhere in the world and to creators from many countries (see EDA chapter).
+\section{Problem definition and background}
+{Kickstarter is an American corporation with a public benefit status launched in 2009 in the United States. The company initiated its international expansion in 2012. The kickstarter platform is open to backers from anywhere in the world and to creators from many countries \ref{subsec:EDA}.
 
 Kickstarter maintains a global crowdfunding platform focused on creativity. Project creators choose a deadline and a minimum funding goal. If the goal is not met by the deadline, no funds are collected and the project is considered failed. Project backers usually receive rewards in exchange for their pledges.
-Once a project state change to successful, pledges are collected from backers. From that point onward, there is no guarantee for project delivery. Kickstarter advises backers to use their own judgment on supporting a project. They also warn project leaders that they could be liable for legal damages from backers for failure to deliver on promises.
+Once a project collects enough pledges to bypass the goal before a deadline stablished by the creator, its state changes to successful. Only at that moment pledges are collected from backers. From that point onward, there is no guarantee for project delivery. Kickstarter advises backers to use their own judgment on supporting a project. They also warn project leaders that they could be liable for legal damages from backers for failure to deliver on promises.
 
 From a backer point of view, it would be interesting to have an analytic model to help with the decision of whether to pledge for a project or not.
-}
-\chapter{Data description and pre-processing}
 
-Raw data were collected from \url{https://webrobots.io/kickstarter-datasets/} in csv format.  The downloaded data correspond to a crawl executed on February 13 2020. Raw data are composed by 57 csv files with 3500 to 4000 rows each. The raw original variables are:
+\section{Data description and pre-processing}
+\label{sec:data_desc}
 
-\textbf{backers\_count:} Continuous numerical variable representing how many people supported the project (backers).
+Raw data were collected from \url{https://webrobots.io/kickstarter-datasets/} in CSV format.  The downloaded data correspond to a crawl executed on February 13 2020. Raw data are composed by 57 CSV files with 3500 to 4000 rows each. The raw original variables are:
+\begin{itemize}
 
-\textbf{blurb:} Brief description of the project (around 150-200 characters).
+    \item \textbf{backers\_count}: integer representing how many people supported the project (backers).
+    \item \textbf{blurb}: textual description of the project (around 150-200 characters).
+    \item \textbf{category}: JSON-encoded description on the kickstarter's fixed categories: id, name, slug, position, parent\_id, parent\_name, color, urls.
 
-\textbf{category:} JSON encoded variable containing information about the kickstarter's fixed categories for the project. The following information about the categories was retrieved by parsing JSON (id, name, slug, position, parent\_id, parent\_name, color, urls).
+    \item \textbf{converted\_pledged\_amount}: pleged amount converted to USD.
+    \item \textbf{country}: country initials (i.e: FR for France):
+    \item \textbf{country\_displayable\_name}: country name.
+    \item \textbf{created\_at}: date on Unix time format.
+    \item \textbf{creator}: JSON-encoded description on project's creator. id, name, is\_registered, chosen\_currency, is\_superbacker, avatar, small, medium, url\_web, url\_api. 
+    \item \textbf{currency}: currency acronym.
+    \item \textbf{currency\_symbol}.
+    \item \textbf{currency\_trailing\_code}: boolean variable.
+    \item \textbf{current\_currency}: USD.
+    \item \textbf{deadline}: crowdfunding deadline in Unix time established by the project's creator.
+    \item \textbf{disable\_communication}: boolean variable.
+    \item \textbf{friends}.
+    \item \textbf{fx\_rate}: conversion rate.
+    \item \textbf{goal}: fund rising goal in creator's fixed currency.
+    \item \textbf{id}: project identifier.
+    \item \textbf{is\_backing}.
+    \item \textbf{is\_starrable}.
+    \item \textbf{is\_starred}.
+    \item \textbf{launched\_at}: launch date on Unix time format.
+    \item \textbf{location}: JSON-encoded description of the project's creator location: id, name, slug, short\_name, displayable\_name, localized\_name, country, state, type, is\_root, expanded\_country, url\_web, url\_location, url\_api\_nearby\_projects.
+    \item \textbf{name}: project's name.
+    \item \textbf{permissions}.
+    \item \textbf{photo}: JSON-encoded description on project's photos: key, full, ed, med, little, small, thumb, 1024x576, 1536x864.
+    \item \textbf{pledged}: pledged amount in original country currency.
+    \item \textbf{profile}: JSON-encoded description on project's profile: id, project\_id, state, state\_changed\_at, name, blurb, background\_color, text\_color, link\_background\_color, link\_text\_color, link\_text, link\_url, show\_feature\_image, background\_image\_opacity, should\_show\_feature\_image\_section, feature\_image\_attributes, image\_urls. 
+    \item \textbf{slug}: small textual description with - as spacers.
+    \item \textbf{source\_url}: url pointing to project's category site on kickstarter.
+    \item \textbf{spotlight}: boolean representing if the project was featured on kickstarter web site.
+    \item \textbf{staff\_pick}: boolean representing if the project was picked by kickstarter staff.
+    \item \textbf{state}: project's state initialy composed by 5 categories (successful, failed, canceled, suspended and live.
+    \item \textbf{state\_changed\_at}: date in Unix time format.
+    \item \textbf{static\_usd\_rate}: static rate for currency conversion into USD.
+    \item \textbf{urls}: JSON-encoded description containing urls: project, rewards.
+    \item \textbf{usd\_pledged}.
+    \item \textbf{usd\_type}: domestic.
+\end{itemize} 
 
-\textbf{converted\_pledged\_amount:} 
-\textbf{country}
-\textbf{country\_displayable\_name}\textbf{}
-{\textbf{created\_at}
-\textbf{creator}
-currency
-currency\_symbol
-currency\_trailing\_code
-current\_currency
-deadline
-disable\_communication
-friends
-fx\_rate
-goal
-id
-is\_backing
-is\_starrable
-is\_starred
-launched\_at
-location
-name
-permissions
-photo
-pledged
-profile
-slug
-source\_url
-spotlight
-staff\_pick
-state
-state\_changed\_at
-static\_usd\_rate
-urls
-usd\_pledged
-usd\_type
-
-\section{Data pre-processing}
-
-\section{Exploratory data analysis}
-
-\chapter{XXXXX}\label{chapt:doe}
-[\textit{Describe the process used to meet the project goal.}]
-
-\chapter{Computational model}\label{chapt:model}
-[\textit{Describe thoroughly the computational model/s used in the project}]
+\subsection{Data pre-processing}
+\label{subsec:data_prepro}
+\subsection{Exploratory data analysis}
+\label{subsec:EDA}
 \section{Data modeling}
+\label{sec:data_model}
 \section{Model interpretation}
+\label{sec:interp}
 \section{Conclusions}
+\label{sec:conclu}
 
-\chapter{Results}\label{chapt:results}
-[\textit{ Report the results of the simulations. Validate your work, i.e. show that the computational model (\ref{chapt:model}) and the simulations you run (the DoE \ref{chapt:doe}) were able to obtain the goal of the project}]
-\section{Perspectives}
-\subsection{Grid convergence}
-% \section{Test 2} ... as needed
+\begin{comment}
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=0.8\linewidth]{RRPR_2016/images/architecture/architecture.pdf}
+\caption{IPOL as a modular system.} 
+\label{fig:architecture}
+\end{figure}
+\end{comment}
 
-\chapter{Conclusions}
+\begin{comment}
+\begin{itemize}
+    \item Demos
+    \item Applications
+\end{itemize}
+\end{comment}
 
-\pagebreak
-
-
-% Adding a bibliography if citations are used in the report
-\bibliographystyle{plain}
-\bibliography{bibliography.bib}
-% Adds reference to the Bibliography in the ToC
-\addcontentsline{toc}{chapter}{\bibname}
-
-\pagebreak
-
-\chapter*{Appendix A: Resources}
-[\textit{Report the config files of the software used (i.e. SU2 \cite{economon2015su2} and the mesher). Also attach to this report an archive with the mesh files, solutions and the reference solution data (e.g. data points of a Cp plot ...)}]
-\section*{Mesh configuration files}
-\section*{SU2 configuration files}
-% \section{Reference solution data}
-
+\bibliographystyle{unsrt} % Sorted references: [1], [2], ..
+\bibliography{bibliography}
 
 \end{document}
