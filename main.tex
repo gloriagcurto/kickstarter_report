@@ -19,7 +19,7 @@
 %\renewcommand{\sectionname}{Lecture} % Redefine "chapter" to a different text
 
 \newcommand{\ToDo}[1]{\textcolor{magenta}{\textbf{[ToDo]} \textbf{#1}}}
-\newcommand{\miguel}[1]{\textcolor{blue}{[Miguel] {#1}}}
+\newcommand{\gloria}[1]{\textcolor{blue}{[Gloria] {#1}}}
 
 
 \title{Classification of Kickstarter's successful or failed projects based on data crawled by a scraper robot (Web Robots)}
@@ -94,6 +94,76 @@ Raw data were collected from \url{https://webrobots.io/kickstarter-datasets/} in
 
 \subsection{Data pre-processing}
 \label{subsec:data_prepro}
+The following steps were followed to obtain a clean dataset for model training or EDA from raw data.
+\begin{itemize}
+    \item \textbf{Join CSV files}.
+Raw data contain ambigous JSON-encoded fields that induce errors while parsing. To avoid those errors, ambigous JSON-encoded containing rows were filtered out while joining data into an unique file (\emph{pre\_join.py}).
+
+    \item \textbf{Deserialize JSON-encoded columns}.
+Columns and rows with missing information were dropped ("friends", "is\_backing", "is\_starred", "permissions") from raw data before JSON deserialization.
+JSON-encoded columns (\emph{'category', 'creator', 'location', 'photo', 'profile', 'urls'}) were isolated from the rest of raw data and deserialized using a custom made function (\emph{deserialize\_in\_batch}) by means of the json\_normalize method from the pandas package and loads from the json package. The implementation can be accesed at \emph{pre\_decode\_JSON.py}).
+
+    \item \textbf{Selection and pre-processing of deserialized variables}.
+    The implementation of the following steps can be accesed at \emph{pre\_deserialized\_to\_one\_hot\_encoding.py}.
+    \begin{itemize}
+ 
+        \item Drop category\_slug because it contains partial redundant information with category\_name and category\_parent\_name.
+        \item Fill category\_parent\_name missing values with their corresponding category\_name value.
+        \item Exploration of location related variables: location\_localized\_name, location\_country, and location\_expanded\_country
+	\begin{itemize}
+            \item location\_localized\_name contains no missing values and 12977 unique values. Such a number of levels for a categorical variable might not be informative. Drop location\_localized\_name.
+            \item location\_country and location\_expanded\_country are redundant. Drop location\_country because is less human readable.
+	\end{itemize}
+	\item Profile related variables. Codification of profile related variables into a binary code reflecting the involvement of the project creator in the generation of a profile.
+	\begin{itemize}
+            \item Re-codification of categorical binary variables:
+	    profile\_state: "inactive"=0, "active"=1
+            profile\_show\_feature\_image: False=0, True=1
+            profile\_should\_show\_feature\_image\_section: False=0, True=1
+
+            \item The rest of the profile related columns are going to be coded in a binary choice variable (missing value = 0= , variable contains a project creator provided value =1). The following columns were processed: 'profile\_name', 'profile\_blurb', 'profile\_background\_color', 'profile\_text\_color', 'profile\_link\_background\_color', 'profile\_link\_text\_color', 'profile\_link\_text', 'profile\_link\_url'.
+        \end{itemize}
+	\item One hot encoding of categorical variables while keeping the original columns for EDA, see section \ref{subsec:EDA}.
+        The variables 'category\_name', 'category\_parent\_name', 'location\_expanded\_country' were codified using pd.get\_dummies and the argument drop\_first was set to True.
+   \end{itemize}
+   \item \textbf{Change date format and compute date derived variables}.
+    The implementation can be accesed at \emph{pre\_date\_format\_and\_derived\_variables.py}.
+    First, date and time coding variables ('created\_at', 'deadline', 'launched\_at', 'state\_changed\_at') in the raw data are in Unix time format and need to be transformed into datetime. The following variables where computed from the original ones: weekday columns for each date variable, month columns for each date variable, year columns for each date variable.
+    initial\_found\_rising\_duration was computed as the difference in days between 'deadline' and 'launched\_at'.
+    found\_rising\_duration was computed as the difference in days between 'state\_changed\_at' and 'launched\_at'.
+    project set up duration was computed as the difference in days between 'launched\_at' and 'created\_at'.
+    
+    \item \textbf{Currency derived variables pre-processing}.
+    The implementation can be accesed at \emph{pre\_currency\_and\_other\_variables.py}.
+    
+    \item \textbf{Currency derived variables pre-processing}.
+    The implementation can be accesed at \emph{pre\_currency\_and\_other\_variables.py}.
+    
+    \item \textbf{Binary encoding}.
+    The implementation can be accesed at \emph{pre\_currency\_and\_other\_variables.py}.
+    
+    \item \textbf{One hot encoding}.
+    The implementation can be accesed at \emph{pre\_currency\_and\_other\_variables.py}.
+    \item \textbf{Target variable (state) pre-processing}.
+    The implementation can be accesed at \emph{pre\_currency\_and\_other\_variables.py}.
+    
+    
+   \item \textbf{Join the JSON decoded variables to the rest of the data}.
+   The implementation can be accesed at \emph{pre\_join\_and\_drop\_live\_state.py}.
+    \item \textbf{Drop rows corresponding to projects on a "live" state}.
+    The implementation can be accesed at \emph{pre\_join\_and\_drop\_live\_state.py}.
+    \item \textbf{Drop rows with text in other languages than English}.
+    The implementation can be accesed at \emph{pre\_words.py}.
+    \item \textbf{Text-mining pre-processing}.
+    The implementation can be accesed at \emph{pre\_text\_mining.py}.
+    \item \textbf{Clean up of the modeling data}.
+    The implementation can be accesed at \emph{pre\_data\_prep\_temporal\_and\_classification.py}.
+    \item \textbf{Clean up for the exploratory data visualization}.
+    The implementation can be accesed at \emph{pre\_data\_prep\_EDA.py}.
+    
+    
+\end{itemize}
+
 \subsection{Exploratory data analysis}
 \label{subsec:EDA}
 \section{Data modeling}
