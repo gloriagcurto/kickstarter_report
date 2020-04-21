@@ -42,8 +42,8 @@ The aim of this project is to classify and ultimately predict the success or fai
 
 Kickstarter maintains a global crowdfunding platform focused on creativity. Project creators choose a deadline and a minimum funding goal. If the goal is not met by the deadline, no funds are collected and the project is considered failed. Project backers usually receive rewards in exchange for their pledges.
 Once a project collects enough pledges to bypass the goal before a deadline stablished by the creator, its state changes to successful. Only at that moment pledges are collected from backers. From that point onward, there is no guarantee for project delivery. Kickstarter advises backers to use their own judgment on supporting a project. They also warn project leaders that they could be liable for legal damages from backers for failure to deliver on promises.
-
-From a backer point of view, it would be interesting to have an analytic model to help with the decision of whether to pledge for a project or not.
+ 
+On one hand, from a backer point of view, it would be interesting to have an analytic model to help with the decision of whether to pledge for a project or not. On the other hand, from the project creators, it would be interesting to have a guide to help them optimize their chances of success.
 
 \section{Data description and pre-processing}
 \label{sec:data_desc}
@@ -90,6 +90,7 @@ Raw data were collected from \url{https://webrobots.io/kickstarter-datasets/} in
     \item \textbf{urls}: JSON-encoded description containing urls: project, rewards.
     \item \textbf{usd\_pledged}.
     \item \textbf{usd\_type}: domestic.
+    
 \end{itemize} 
 
 \subsection{Data pre-processing}
@@ -128,48 +129,108 @@ JSON-encoded columns (\emph{'category', 'creator', 'location', 'photo', 'profile
    \end{itemize}
    \item \textbf{Change date format and compute date derived variables}.
     The implementation can be accesed at \emph{pre\_date\_format\_and\_derived\_variables.py}.
+    
     First, date and time coding variables ('created\_at', 'deadline', 'launched\_at', 'state\_changed\_at') in the raw data are in Unix time format and need to be transformed into datetime. The following variables where computed from the original ones: weekday columns for each date variable, month columns for each date variable, year columns for each date variable.
-    initial\_found\_rising\_duration was computed as the difference in days between 'deadline' and 'launched\_at'.
-    found\_rising\_duration was computed as the difference in days between 'state\_changed\_at' and 'launched\_at'.
-    project set up duration was computed as the difference in days between 'launched\_at' and 'created\_at'.
+    
+    'initial\_found\_rising\_duration' was computed as the difference in days between 'deadline' and 'launched\_at'.
+    
+    'found\_rising\_duration' was computed as the difference in days between 'state\_changed\_at' and 'launched\_at'.
+    
+    'project\_set\_up\_duration' was computed as the difference in days between 'launched\_at' and 'created\_at'.
+    
+    Date variables were prunned before model training to remove the 'state\_changed\_at' derived ones.
     
     \item \textbf{Currency derived variables pre-processing}.
     The implementation can be accesed at \emph{pre\_currency\_and\_other\_variables.py}.
     
-    \item \textbf{Currency derived variables pre-processing}.
+    The following original variables were drop due to redundancies or because they are not informative for the model: 'current\_currency', 'currency\_trailing\_code', 'fx\_rate', 'converted\_pledged\_amount', 'pledged', 'slug', 'usd\_type'.
+    
+    The variable 'usd\_goal' was computed by multiplication of the variables 'goal' 'and 'static\_usd\_rate' to able to compare the pledge goals for all the projects. 'goal' and 'static\_usd\_rate' were dropped after the generation of 'usd\_goal'.
+    
+    The variable 'is\_starrable' was also dropped, because of lack of relevance.
+    
+    The variables 'disable\_communication', 'spotlight' and 'staff\_pick' were recodified by replacing False=0 and True=1.
+    
+    The variable currency was dummified using get\_dummies (the original varaible was kept for visualization purpose).
+
+    \item \textbf{State pre-processing (target variable)}.
     The implementation can be accesed at \emph{pre\_currency\_and\_other\_variables.py}.
     
-    \item \textbf{Binary encoding}.
-    The implementation can be accesed at \emph{pre\_currency\_and\_other\_variables.py}.
+    State is the target variable for classification. The raw variable is a categorical variable with 5 levels('successful', 'failed', 'live', 'canceled', 'suspended') and  no missing values.
     
-    \item \textbf{One hot encoding}.
-    The implementation can be accesed at \emph{pre\_currency\_and\_other\_variables.py}.
-    \item \textbf{Target variable (state) pre-processing}.
-    The implementation can be accesed at \emph{pre\_currency\_and\_other\_variables.py}.
+    The variable 'state\_group' was generated by grouping the canceled and suspended projects into 'failed'. It contains then 3 distinct levels ('successful', 'failed' and 'live').
     
-    
+    The variable 'state\_code' was generated by dummification from 'state\_grouped' (failed = 0, successful=1, live=2). There are 114940 successful projects, 84311 failed projects and 6651 live projects.
+
    \item \textbf{Join the JSON decoded variables to the rest of the data}.
    The implementation can be accesed at \emph{pre\_join\_and\_drop\_live\_state.py}.
+   
     \item \textbf{Drop rows corresponding to projects on a "live" state}.
     The implementation can be accesed at \emph{pre\_join\_and\_drop\_live\_state.py}.
+    
+    \item \textbf{Evaluate and drop duplicate rows}.
+    The implementation can be accesed at \emph{pre\_duplicates.py}.
+    21392 duplicate rows were detected and removed before further processing using pandas duplicated and drop\_duplicates functions.
+    
+    \item \textbf{Drop variables carrying low information}.
+    Data dimensions at this processing stage was 177859 rows and 428 columns. In the following scripts I will evaluate the informative potential of different subsets of variables and drop the less informative ones in order to reduce the number of binary encoded columns and reduce the overfitting potential.
+    
+    \begin{itemize}
+	\item Generation of the variable 'profile'.
+        The implementation can be accesed at \emph{pre\_profile\_pruning.py}.
+	
+	'profile' was generated by addition of the following columns: 'profile\_ state', 'profile\_ name', 'profile\_ blurb', 'profile\_ background\_ color']+ df['profile\_ text\_ color', 'profile\_ link\_ background\_ color', 'profile\_ link\_ text\_ color', 'profile\_ link\_ text', 'profile\_ link\_ url', 'profile\_ show\_ feature\_ image', 'profile\_ should\_ show\_ feature\_ image\_ section'. It represents an score accounting for profile completeness. The variables were dropped after the score was computed.
+        
+	The number of columns was reduced to 418.
+	\item Category name pruning.
+	The implementation can be accesed at \emph{pre\_category\_name\_pruning.py }.
+	
+        \item 
+        The implementation can be accesed at \emph{pre\_country\_pruning.py}.  
+	   
+	\item  
+	The implementation can be accesed at \emph{pre\_currency\_pruning.py }.                  
+        
+    \end{itemize}
     \item \textbf{Drop rows with text in other languages than English}.
     The implementation can be accesed at \emph{pre\_words.py}.
+    The variables
+    
     \item \textbf{Text-mining pre-processing}.
     The implementation can be accesed at \emph{pre\_text\_mining.py}.
     \item \textbf{Clean up of the modeling data}.
     The implementation can be accesed at \emph{pre\_data\_prep\_temporal\_and\_classification.py}.
     \item \textbf{Clean up for the exploratory data visualization}.
     The implementation can be accesed at \emph{pre\_data\_prep\_EDA.py}.
+     
     
-    
+    pre\_year\_EDA.py
+    pre\_data\_prep\_temporal\_and\_classification.py    
+
+    pre\_split\_train\_test.py                         
+    pre\_words.py
+    pre\_text\_mining.py
+    pre\_text\_mining\_ts.py
+    pre\_data\_model\_test.py    
+    pre\_data\_model.py 
 \end{itemize}
 
 \subsection{Exploratory data analysis}
 \label{subsec:EDA}
+                   
+EDA\_profiling.py                              
+EDA\_tt\_before\_split.py                        
+EDA\_tt\_profile.py                             
+EDA\_tt\_ts\_split.py
 \section{Data modeling}
-\label{sec:data_model}
+\label{sec:model}
+Spotlight allows creators to make a home for their project on Kickstarter after they’ve been successfully funded. Each creator can take control of their page and build a customized, central hub for news, updates, links to finished work, and anything else they want the world to know about their project.
+train\_wo\_spotlight.py
+training\_wo\_ts.py
+train\_first\_model\_wo\_ts.py
 \section{Model interpretation}
 \label{sec:interp}
+EDA\_features\_important.py 
 \section{Conclusions}
 \label{sec:conclu}
 
