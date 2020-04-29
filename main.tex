@@ -15,6 +15,7 @@
 \usepackage{eurosym}
 \usepackage{parskip} % Do not indent the beginning of each paragraph
 \usepackage{comment}
+\usepackage{booktabs}
 
 %\renewcommand{\sectionname}{Lecture} % Redefine "chapter" to a different text
 
@@ -224,66 +225,364 @@ JSON-encoded columns (\emph{'category', 'creator', 'location', 'photo', 'profile
     \item \textbf{Split train and test}.
     The implementation can be accessed at \emph{pre\_split\_train\_test.py }.
     
-    Check projects by year (state changed) The implementation can be accessed at \emph{pre\_year\_EDA.py}.
+    Before splitting the data in train and test sets, I visualized the projects by year ("state\_changed\_at") and state (FIG). The implementation can be accessed at \emph{pre\_year\_EDA.py} and \emph{pre\_data\_prep\_temporal\_and\_classification.py}. The target variable ( state) shows no clear correlation with time, as we can observe in the plots (FIG) and our data are not evenly spaced. Therefore, after close examination of our data, I decided to implement a random split of train and test sets using the train\_test\_split functiikit learn model\_selection package, a train size of 73 \% a 37 as random seed. Before spliting, 15 columns were dropped, containing information not available prior to the project's state change. Dimensions of training set are 89490 rows and 97 columns, and dimensions of test set are 33100 rows and 97 columns. 
+    FIG 
 
-Results from pre\_year\_EDA.py
-
-year	percentages	project\_count	
-2020	61,0364683301344	1563	
-2019	67,2209026128266	16840	18403
-2018	54,2246282464195	14593	32996
-2017	48,8882229547498	16685	
-2016	45,8090641815055	18027	
-2015	40,9574019401097	23710	
-2014	48,7238557138527	16495	
-2013	78,1746632359619	6607	
-2012	76,7904781448799	4873	
-2011	75,4701211867948	2393	
-2010	72,0547945205479	730	
-2009	75,6756756756757	74	
-		                    122590	
-
-If I use 2020 (1563 projects) and 2019 projects (16840 projects) as test data, I will have 15% as test (18403×100÷122590 = 15,011828045% of total projects).
-If I use also oct-dec 2018 (26,915735378 %)
-
-I also do a random train test split.
-        \begin{itemize}
-	    \item
-	    \item
-	\end{itemize}
 	
-    \item \textbf{Text-mining pre-processing}. l
+    \item \textbf{Generation of the frequency score feature}.
     The implementation can be accessed at \emph{pre\_text\_mining.py}.
-    \item \textbf{Clean up of the modeling data}.
-    The implementation can be accessed at \emph{pre\_data\_prep\_temporal\_and\_classification.py}.
-    \item \textbf{Clean up for the exploratory data visualization}.
-    The implementation can be accessed at \emph{pre\_data\_prep\_EDA.py}.
-     
-  
+    Title and descriptions of the project were processed to obtain an score based on word frequencies in succesful and failed projects by principal category ('category\_parent\_name', 15 categories). Word  frequencies were computed using both 'blurb' and 'name' variables on the training set. Punctuation signs were replaced by blank spaces, words were tokenized (word\_tokenize from nltk package), stop words were filtered (stopwords from nltk), and stemmed (PorterStemmer from nltk). Word frequency was computed using FreqDist (nltk package). The frequency score was computed for every project by adding the successful project frequency of every word present in its 'blurb' and 'name' variables and substracting the failed project frequencies. The score was normalized by text lenght.  
 
-                         
-    pre\_text\_mining.py
-    pre\_text\_mining\_ts.py
-    pre\_data\_model\_test.py    
-    pre\_data\_model.py 
 \end{itemize}
 
 \subsection{Exploratory data analysis}
 \label{subsec:EDA}
-                   
-EDA\_profiling.py                              
-EDA\_tt\_before\_split.py                        
-EDA\_tt\_profile.py                             
-EDA\_tt\_ts\_split.py
+\begin{itemize}
+
+\item \textbf{Profile reports} generated multiple times during data pre-processing using the pandas profile package (\url{https://pypi.org/project/pandas-profiling/}) to help with data visualization. For clarity purposes, only raw, train and test data htlm profiling reports can be found in annex files.
+The implementation can be accessed at \emph{EDA\_profiling.py} and \emph{EDA\_tt\_profile.py }.
+
+Pandas profiling generates an statistical description of the data and each variable, computes interaction and correlation plots and warns about potential sources of problems such as high correlation, duplicates, high cardinality for categorical variables and skewed or zero containing variables.
+These reports were extremely useful to quickly identify duplicated rows, variables with high numbers of missing values and also non numerical variables present in the train and test sets that are incompatible with XGBoost modeling.
+
+\item \textbf{Word clouds} were generated from the train and test sets by principal category and successful or failed projects using WordCloud. 
+The implementation can be accessed at \emph{pre\_text\_mining.py}.
+
+Word clouds were representative of each category and sometimes were helpful to identify subcategories with high rates of failed projects (such as food trucks within Food, see fig). The majority of the most frequent 200 words were shared by successful and failed projects within categories but they also always present especific more frequent words.
+If we take as an example the Comic word clouds, we can see that both successful and failed projects contain graphic novel, adventure and comic with aproximatively the same frequency, but horror, fantasy and manga, are overrepresented in the failed projects. At the same time, anthologies, sci fi and girl terms are overrepresented in the succesful projects, suggesting possible differences in the succesful rate of different comic genres (Figure).
+Other words were consistenly found associated to successful projects across categories. This is the case, for example, of enamel pin and hard enamel that were associated to succesful projects from the crafts and fashion categories, and absent from the 200 most frequent words (FIG).
+
+For clarity purpose, test set word clouds can be found as an annex (annex1).
+
+Word clouds were useful to understand project dinamics within categories and to evaluate the pertinency of the frecuency score feature. As we can identify trends in the word clouds associated to the target variable, the frequency score could potentialy help increase the evaluation metrics of our model.
+
+FIG only with train
+
+The rest of data visualization was performed as a guide during data pre-processing (ref figures) or the interpretation of the model (ref figures).
+
+\end{itemize}
+
+
 \section{Data modeling}
 \label{sec:model}
-Spotlight as a place for the projects on Kickstarter after they’ve been successfully funded. Each creator can take control of their page and build a customized, central hub for news, updates, links to finished work, and anything else they want the world to know about their project.
-train\_wo\_spotlight.py
-training\_wo\_ts.py
-train\_first\_model\_wo\_ts.py
+\begin{itemize}
+\item \textbf{Data processing prior to XGBoost training}
+The implementation can be accessed at \emph{pre\_data\_model\_train.py} and \emph{pre\_data\_model\_test.py}.
+First, the target variable in numeric format ('state\_code') was isolated from the features and written to a file.
+Second, non numeric features were identified thanks to the pandas-profiling report and removed. Features were written to a file.
+
+\item \textbf{Methodological choices}
+The following packages were used for data modeling, evaluation and interpretation:
+\begin{itemize}
+	\item xgboost.
+	Extreme Gradient Boosting classifier~\cite{DBLP:journals/corr/ChenG16} was chosen due to its performance, escalabilty and built-in model interpretation capabilities.
+The tree based booster was prefered because of the intuitive interpretation of tree models.
+	\item Scikit learn matrics: classification\_report, confusion\_matrix~\cite{pedregosa2011scikit}.
+	\item bayesian-optimization~\cite{nogueiraBayOpt}
+	Bayesian optimization with cross validation was prefered as hyperparameter tuning method over a grid or a random search because it has been shown to obtain better results in fewer evaluations~\cite{snoek2012practical, NIPS2011_4443}.
+
+	\item SHAP
+	SHAP ~\cite{DBLP:journals/corr/LundbergL17, lundberg2020local2global} was prefered over other model interpretation methods due to its mathematical strenght.
+\end{itemize}
+
+\item \textbf{Model training, first iteration}
+
+The implementation can be accessed at \emph{train\_first\_model\_wo\_ts.py}.
+
+As a first attempt to model the data, a XGboost tree bosster classifier was initialized with default parameter and fitted to the training data. Evaluation metrics for predictions using both the training and test set were consistently found to show a score of 1, see tables \ref{table:model1_tr_cr}, \ref{table:model1_te_cr}.
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{lrrrr}
+\toprule
+{} &  precision &  recall &  f1-score &  support \\
+\midrule
+0            &        1.0 &     1.0 &       1.0 &  41522.0 \\
+1            &        1.0 &     1.0 &       1.0 &  47968.0 \\
+accuracy     &        1.0 &     1.0 &       1.0 &      1.0 \\
+macro avg    &        1.0 &     1.0 &       1.0 &  89490.0 \\
+weighted avg &        1.0 &     1.0 &       1.0 &  89490.0 \\
+\bottomrule
+\end{tabular}
+\caption{Classification report for training set}
+\label{table:model1_tr_cr}
+\end{table}
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{lrrrr}
+\toprule
+{} &  precision &  recall &  f1-score &  support \\
+\midrule
+0            &        1.0 &     1.0 &       1.0 &  15423.0 \\
+1            &        1.0 &     1.0 &       1.0 &  17677.0 \\
+accuracy     &        1.0 &     1.0 &       1.0 &      1.0 \\
+macro avg    &        1.0 &     1.0 &       1.0 &  33100.0 \\
+weighted avg &        1.0 &     1.0 &       1.0 &  33100.0 \\
+\bottomrule
+\end{tabular}
+\caption{Classification report for test set}
+\label{table:model1_te_cr}
+\end{table}
+
+In order to diagnose the reason behind such a perfect metrics, training set label randomization was performed using shuffle from scikit learn utils package. A new model was fitted with the shuffled labels and predictions for both the training and test sets were evaluated. As shown in tables \ref{table:model1_tr_sh_cr}, \ref{table:model1_te_sh_cr} and in their corresponding confusion matrices  \ref{table:model1_tr_sh_cm}, \ref{table:model1_te_sh_cm}, prediction was randomized after shuffling the labels, as proben by an accuracy of  50\% in predictions for the test set. This results suggest that the perfect scores are not due to overfitting.
+ 
+\begin{table}[h!]
+\centering
+\begin{tabular}{lrrrr}
+\toprule
+{} &  precision &    recall &  f1-score &       support \\
+\midrule
+0            &   0.726857 &  0.325442 &  0.449587 &  41522.000000 \\
+1            &   0.604945 &  0.894138 &  0.721647 &  47968.000000 \\
+accuracy     &   0.630272 &  0.630272 &  0.630272 &      0.630272 \\
+macro avg    &   0.665901 &  0.609790 &  0.585617 &  89490.000000 \\
+weighted avg &   0.661510 &  0.630272 &  0.595415 &  89490.000000 \\
+\bottomrule
+\end{tabular}
+\caption{Classification report for predictions of the train set using the model trained with shuffled labels}
+\label{table:model1_tr_sh_cr}
+\end{table}
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{lrr}
+\toprule
+{} &      0 &      1 \\
+\midrule
+0 &  13513 &  28009 \\
+1 &   5078 &  42890 \\
+\bottomrule
+\end{tabular}
+
+\caption{Confusion matrix for predictions of the train set using the model trained with shuffled labels}
+\label{table:model1_tr_sh_cm}
+\end{table}
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{lrrrr}
+\toprule
+{} &  precision &    recall &  f1-score &       support \\
+\midrule
+0            &   0.419684 &  0.184141 &  0.255971 &  15423.000000 \\
+1            &   0.522159 &  0.777847 &  0.624858 &  17677.000000 \\
+accuracy     &   0.501208 &  0.501208 &  0.501208 &      0.501208 \\
+macro avg    &   0.470921 &  0.480994 &  0.440415 &  33100.000000 \\
+weighted avg &   0.474410 &  0.501208 &  0.452975 &  33100.000000 \\
+\bottomrule
+\end{tabular}
+\caption{Classification report for predictions of the test set using the model trained with shuffled labels}
+\label{table:model1_te_sh_cr}
+\end{table}
+ 
+\begin{table}[h!]
+\centering
+\begin{tabular}{lrrrr}
+\toprule
+{} &  precision &    recall &  f1-score &       support \\
+\midrule
+0            &   0.419684 &  0.184141 &  0.255971 &  15423.000000 \\
+1            &   0.522159 &  0.777847 &  0.624858 &  17677.000000 \\
+accuracy     &   0.501208 &  0.501208 &  0.501208 &      0.501208 \\
+macro avg    &   0.470921 &  0.480994 &  0.440415 &  33100.000000 \\
+weighted avg &   0.474410 &  0.501208 &  0.452975 &  33100.000000 \\
+\bottomrule
+\end{tabular}
+\caption{Confusion matrix for predictions of the test set using the model trained with shuffled labels}
+\label{table:model1_te_sh_cm}
+\end{table}
+
+Tree and importance plots for model interpretation implemented in the XGBoost package solved the mistery. Interpretation plots showed that the decision tree had a unique branch and the predictions were solely based in the value of the feature 'spotlight', that was identified as highly correlated with the target variable by the pandas-profiling reports. FIG
+
+After a search in the kickstater's website, I found a more exact difinition for 'spotlight' that the one provided with the data. Spotlight is a place for the projects on Kickstarter were the creators can communicate their project's progress, after they’ve been successfully funded.
+
+I removed 'spotlight' from the features files and proceed to train a new model
+
+\item \textbf{Model training, second iteration}
+
+The implementation can be accessed at \emph{train\_wo\_spotlight.py}.
+
+A bayesian Optimization function for xgboost was defined with the following parameters:
+\begin{itemize}
+	\item 'objective': 'binary:logistic'. Represents the learning task and the corresponding learning objective for a binary classification.
+	\item 'max\_depth': int(max\_depth). Maximum depth of a tree. Higher values make the model more complex and more likely to overfit. Range: $(0, \infty)$.
+	\item 'gamma': gamma. Minimum loss reduction required to partition a leaf node of the tree. Higher values make the algorithm more conservative. Range: $(0, \infty)$.
+	\item'learning\_rate':learning\_rate. Step size shrinkage used in boosting iterations. Higher values make the process more conservative. Range: (0,1).
+	\item 'subsample': subsample. Subsample ratio of the training instancesprior to growing trees. Subsampling will occur once in every boosting iteration and prevents overfitting. Range: (0,1).
+	\item 'eval\_metric': 'auc'. AUC measures the quality of the model's predictions irrespective of what classification threshold is chosen and their absolute values. For our classification task, we don't need well calibrated outputs and the cost of classification errors in our case is not critical. Moreover, a paralel hyperparameter optimization was evaluated using 'error' as metric with similar results. Range: (0,1).
+
+\end{itemize}
+
+Cross validation was performed in 5 folds and 500 iterations, with and early stop at 100 rounds.
+Hyperparameter search was evaluated using "test-auc-mean" as metric.
+
+The bayesian hyperparameter space was designed in a conservative way, to avoid overfitting of the data.
+\begin{itemize}
+	\item 'max\_depth': (3, 8).  Default value is 6. 
+	\item 'gamma': (0, 5). Default value is 0.
+	\item 'learning\_rate':(0, 1). Default value is 0.3.
+	\item 'subsample':(0, 1). Default value is 1.
+\end{itemize}
+
+Bayesian optimization was performed for 5 iterations with 8 steps of random exploration and an acquisition function of expected improvement ('ie'). Best parameters were optimized to \{'gamma': 3.262977074427203, 'learning\_rate': 0.08113939174319618, 'max\_depth': 7.84163489438336, 'subsample': 0.9915277034216099\}.
+
+The following tables contain evaluation metrics obtained by training the model with the best hyperparameters defined by bayesian optimization:
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{lrrrr}
+\toprule
+{} &  precision &    recall &  f1-score &       support \\
+\midrule
+0            &   0.833378 &  0.896802 &  0.863927 &  41522.000000 \\
+1            &   0.904370 &  0.844792 &  0.873566 &  47968.000000 \\
+accuracy     &   0.868924 &  0.868924 &  0.868924 &      0.868924 \\
+macro avg    &   0.868874 &  0.870797 &  0.868747 &  89490.000000 \\
+weighted avg &   0.871431 &  0.868924 &  0.869094 &  89490.000000 \\
+\bottomrule
+\end{tabular}
+\caption{Classification report for predictions of the train set using bayesian optimization hyperparameters}
+\label{table:model_tr_bo_cr}
+\end{table}
+
+\begin{table}[h!]
+\centering
+
+\begin{tabular}{lrr}
+\toprule
+{} &      0 &      1 \\
+\midrule
+0 &  37237 &   4285 \\
+1 &   7445 &  40523 \\
+\bottomrule
+\end{tabular}
+\caption{Confusion matrix for predictions of the train set using bayesian optimization hyperparameters}
+\label{table:model_tr_bo_cm}
+\end{table}
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{lrrrr}
+\toprule
+{} &  precision &    recall &  f1-score &      support \\
+\midrule
+0            &   0.829042 &  0.885107 &  0.856157 &  15423.00000 \\
+1            &   0.893471 &  0.840754 &  0.866311 &  17677.00000 \\
+accuracy     &   0.861420 &  0.861420 &  0.861420 &      0.86142 \\
+macro avg    &   0.861256 &  0.862930 &  0.861234 &  33100.00000 \\
+weighted avg &   0.863450 &  0.861420 &  0.861580 &  33100.00000 \\
+\bottomrule
+\end{tabular}
+\caption{Classification report for predictions of the test set using bayesian optimization hyperparameters}
+\label{table:model_te_bo_cr}
+\end{table}
+ 
+\begin{table}[h!]
+\centering
+\begin{tabular}{lrr}
+\toprule
+{} &      0 &      1 \\
+\midrule
+0 &  13651 &   1772 \\
+1 &   2815 &  14862 \\
+\bottomrule
+\end{tabular}
+\caption{Confusion matrix for predictions of the test set using bayesian optimization hyperparameters}
+\label{table:model_te_bo_cm}
+\end{table}
+
+If we compare these classification reports, in tables \ref{table:model_tr_bo_cr}, \ref{table:model_te_bo_cr,} to the ones of a XGBoost classifier with default parameters, in tables, \ref{table:model_tr_cr}, \ref{table:model_te_cr}, we can observe similar metrics. However, the confusion matrices for the default hyperparameters model, see tables \ref{table:model_tr_cm}, \ref{table:model_te_cm}, were slighly better than for the bayesian optimization model, see tables \ref{table:model_tr_bo_cm}, \ref{table:model_te_bo_cm}. Therefore, I decided to save the default parameters model to a file for further exploitation.  The following step was model interpretation.
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{lrrrr}
+\toprule
+{} &  precision &    recall &  f1-score &       support \\
+\midrule
+0            &   0.835575 &  0.906652 &  0.869664 &  41522.000000 \\
+1            &   0.912773 &  0.845564 &  0.877884 &  47968.000000 \\
+accuracy     &   0.873908 &  0.873908 &  0.873908 &      0.873908 \\
+macro avg    &   0.874174 &  0.876108 &  0.873774 &  89490.000000 \\
+weighted avg &   0.876955 &  0.873908 &  0.874070 &  89490.000000 \\
+\bottomrule
+\end{tabular}
+
+\caption{Classification report for predictions of the train set using default hyperparameters}
+\label{table:model_tr_cr}
+\end{table}
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{lrr}
+\toprule
+{} &      0 &      1 \\
+\midrule
+0 &  37646 &   3876 \\
+1 &   7408 &  40560 \\
+\bottomrule
+\end{tabular}
+\caption{Confusion matrix for predictions of the train set using default hyperparameters}
+\label{table:model_tr_cm}
+\end{table}
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{lrrrr}
+\toprule
+{} &  precision &    recall &  f1-score &       support \\
+\midrule
+0            &   0.828747 &  0.892369 &  0.859382 &  15423.000000 \\
+1            &   0.899351 &  0.839113 &  0.868188 &  17677.000000 \\
+accuracy     &   0.863927 &  0.863927 &  0.863927 &      0.863927 \\
+macro avg    &   0.864049 &  0.865741 &  0.863785 &  33100.000000 \\
+weighted avg &   0.866453 &  0.863927 &  0.864085 &  33100.000000 \\
+\bottomrule
+\end{tabular}
+\caption{Classification report for predictions of the test set using default hyperparameters}
+\label{table:model_te_cr}
+\end{table}
+ 
+\begin{table}[h!]
+\centering
+\begin{tabular}{lrr}
+\toprule
+{} &      0 &      1 \\
+\midrule
+0 &  13763 &   1660 \\
+1 &   2844 &  14833 \\
+\bottomrule
+\end{tabular}
+\caption{Confusion matrix for predictions of the test set using default hyperparameters}
+\label{table:model_te_cm}
+\end{table}
+
+\end{itemize}
+
 \section{Model interpretation}
 \label{sec:interp}
-EDA\_features\_important.py 
+
+\begin{itemize}
+\item \textbf{XGBoost built-in model interpretation}
+
+The implementation can be accessed at~\emph{train\_wo\_spotlight.py}.
+
+\item \textbf{SHAP model interpretation}
+
+The implementation can be accessed at~\emph{SHAP\_error\_evaluation.py}
+
+\item \textbf{Prediction error evaluation using SHAP force plots}
+
+The implementation can be accessed at~\emph{SHAP\_error\_evaluation.py}
+
+\end{itemize}
+
+\item \textbf{Data visualization to support model interpretation}
+
+The implementation can be accessed at~\emph{EDA\_features\_important.py}
+
+
+\end{itemize}
 \section{Conclusions}
 \label{sec:conclu}
 
@@ -294,13 +593,6 @@ EDA\_features\_important.py
 \caption{IPOL as a modular system.} 
 \label{fig:architecture}
 \end{figure}
-\end{comment}
-
-\begin{comment}
-\begin{itemize}
-    \item Demos
-    \item Applications
-\end{itemize}
 \end{comment}
 
 \bibliographystyle{unsrt} % Sorted references: [1], [2], ..
