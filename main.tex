@@ -38,7 +38,7 @@
 
 
 \title{Classification of Kickstarter's successful or failed projects based on data crawled by a scraper robot (Web Robots)}
-\author{Gloria GONZÁLEZ CURTO}
+\author{Gloria GONZÁLEZ CURTO\\Promotion février 2020}
 \date{\today}
 
 \begin{document}
@@ -47,6 +47,7 @@
 
 \tableofcontents
 
+\newpage
 
 \section{Summary}
 \label{ref:sum}
@@ -207,7 +208,7 @@ JSON-encoded columns (\emph{'category', 'creator', 'location', 'photo', 'profile
 	
 	\item Category name pruning.
 	
-	The implementation is available at {\tt pre\_category\_name\_pruning.py }.
+	The implementation is available at {\tt pre\_category\_name\_pruning.py}.
 	
 	'category\_name\_ori' encodes 159 subcategories of the 15 parent categories for kickstarter's projects. In order to evaluate the information content of each of these subcategory levels, plots and percentages of successful projects by secondary category were plotted to decide which one hot encoded columns under category\_name to drop. Only categories with a percentage of successful projects of at least 55\% (project success rate for the data is 53\%) that were informative within their parent categories were kept.
 	
@@ -216,17 +217,17 @@ JSON-encoded columns (\emph{'category', 'creator', 'location', 'photo', 'profile
 \begin{figure}
   \begin{subfigure}[a]{0.8\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/variable_pruning_EDA/cat_name/nprojects_Comics_state.pdf}
-    \caption{Count plot of successful and failed projects and subcategories of Comics principal category}
+    \caption{Count plot of successful and failed projects and subcategories of Comics principal category.}
     \label{fig:countCatA}
   \end{subfigure}
   \begin{subfigure}[b]{0.8\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/variable_pruning_EDA/cat_name/nprojects_Dance_state.pdf}
-    \caption{Count plot of successful and failed projects and subcategories of Dance principal category}
+    \caption{Count plot of successful and failed projects and subcategories of Dance principal category.}
     \label{fig:countCatB}
   \end{subfigure}
   \begin{subfigure}[c]{0.8\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/variable_pruning_EDA/cat_name/nprojects_Theater_state.pdf}
-    \caption{Count plot of successful and failed projects and subcategories of Dance principal category}
+    \caption{Count plot of successful and failed projects and subcategories of Dance principal category.}
     \label{fig:countCatC}
   \end{subfigure}
 \caption{Count plots of successful and failed projects within categories.}
@@ -245,7 +246,7 @@ JSON-encoded columns (\emph{'category', 'creator', 'location', 'photo', 'profile
 	The number of columns was reduced to 125.
 	
 	\item  Currency pruning.
-	The implementation is available at {\tt pre\_currency\_pruning.py }.
+	The implementation is available at {\tt pre\_currency\_pruning.py}.
 	
 	Currency encodes 14 different levels. Count plots and percentages of succesfull projects were computed for tha variable 'currency\_orig'. Currencies with more than 55\% of successful projects were retained (GBP, HKD, SGD, JPY) and compared to the retained countries. All currency levels were dropped because the selected currencies correspond to countries that were already selected and the information was redundant.
 	
@@ -265,22 +266,22 @@ JSON-encoded columns (\emph{'category', 'creator', 'location', 'photo', 'profile
     
     \item \textbf{Split train and test}.
     
-    The implementation is available at {\tt pre\_split\_train\_test.py }.
+    The implementation is available at {\tt pre\_split\_train\_test.py}.
     
     Before splitting the data in train and test sets, I visualized the projects by year ("state\_changed\_at") and state (see Figure \ref{fig:time}).
     
 \begin{figure}
   \begin{subfigure}[a]{0.9\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/nprojects_date_state_change.pdf}
-    \caption{Total, successful and failed projects in time}
+    \caption{Total, successful and failed projects in time.}
     \label{fig:linetime}
   \end{subfigure}
   \begin{subfigure}[b]{0.9\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/variable_pruning_EDA/year/nprojects_year_state.pdf}
-    \caption{Count plot of successful and failed projects by year}
+    \caption{Count plot of successful and failed projects by year.}
     \label{fig:countYear}
     \end{subfigure}
-\caption{Temporal dimension of the target variable}
+\caption{Temporal dimension of the target variable.}
 \label{fig:time}
 \end{figure}
 
@@ -324,152 +325,152 @@ Word clouds were useful to understand project dinamics within categories and to 
 \begin{figure}
   \begin{subfigure}[a]{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Art_successful.pdf}
-    \caption{Successful Art}
+    \caption{Successful Art.}
     \label{fig:Art_s}
   \end{subfigure}
   \begin{subfigure}[a']{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Art_failed.pdf}
-    \caption{Failed Art}
+    \caption{Failed Art.}
     \label{fig:Art_f}
   \end{subfigure}
   \begin{subfigure}[b]{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Comics_successful.pdf}
-    \caption{Successful Comics}
+    \caption{Successful Comics.}
     \label{fig:Comic_s}
   \end{subfigure} 
   \begin{subfigure}[b']{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Comics_failed.pdf}
-    \caption{Failed Comics}
+    \caption{Failed Comics.}
     \label{fig:Comic_f}
   \end{subfigure}
   \begin{subfigure}[c]{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Crafts_successful.pdf}
-    \caption{Successful Crafts}
+    \caption{Successful Crafts.}
     \label{fig:Crafts_s}
   \end{subfigure}
     \begin{subfigure}[c']{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Crafts_failed.pdf}
-    \caption{Failed Crafts}
+    \caption{Failed Crafts.}
     \label{fig:Crafts_f}
   \end{subfigure}
     \begin{subfigure}[d]{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Dance_successful.pdf}
-    \caption{Successful Dance}
+    \caption{Successful Dance.}
     \label{fig:Dance_s}
   \end{subfigure}
     \begin{subfigure}[d']{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Dance_failed.pdf}
-    \caption{Failed Dance}
+    \caption{Failed Dance.}
     \label{fig:Dance_f}
    \end{subfigure}
     \begin{subfigure}[e]{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Design_successful.pdf}
-    \caption{Successful Design}
+    \caption{Successful Design.}
     \label{fig:Design_s}
   \end{subfigure} 
   \begin{subfigure}[e']{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Design_failed.pdf}
-    \caption{Failed Design}
+    \caption{Failed Design.}
     \label{fig:Design_f}
   \end{subfigure} 
     \begin{subfigure}[f]{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Fashion_successful.pdf}
-    \caption{Successful Fashion}
+    \caption{Successful Fashion.}
     \label{fig:Fashion_s}
   \end{subfigure} 
   \begin{subfigure}[f']{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Fashion_failed.pdf}
-    \caption{Failed Fashion}
+    \caption{Failed Fashion.}
     \label{fig:Fashion_f}
   \end{subfigure}
     \begin{subfigure}[g]{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Film_Video_successful.pdf}
-    \caption{Successful Film \& Video}
+    \caption{Successful Film \& Video.}
     \label{fig:Film_Video_s}
   \end{subfigure} 
   \begin{subfigure}[g']{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Film_Video_failed.pdf}
-    \caption{Failed Film \& Video}
+    \caption{Failed Film \& Video.}
     \label{fig:Film_Video_f}
   \end{subfigure}
     \begin{subfigure}[h]{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Food_successful.pdf}
-    \caption{Successful Food}
+    \caption{Successful Food.}
     \label{fig:Food_s}
   \end{subfigure} 
   \begin{subfigure}[h']{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Food_failed.pdf}
-    \caption{Failed Food}
+    \caption{Failed Food.}
     \label{fig:Food_f}
   \end{subfigure}
     \begin{subfigure}[i]{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Games_successful.pdf}
-    \caption{Successful Games}
+    \caption{Successful Games.}
     \label{fig:Games_s}
   \end{subfigure} 
   \begin{subfigure}[i']{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Games_failed.pdf}
-    \caption{Failed Games}
+    \caption{Failed Games.}
     \label{fig:Games_f}
   \end{subfigure}
   \begin{subfigure}[j]{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Journalism_successful.pdf}
-    \caption{Successful Journalism}
+    \caption{Successful Journalism.}
     \label{fig:Journalism_s}
   \end{subfigure} 
   \begin{subfigure}[j']{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Journalism_failed.pdf}
-    \caption{Failed Journalism}
+    \caption{Failed Journalism.}
     \label{fig:Journalism_f}
   \end{subfigure}
   \begin{subfigure}[k]{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Music_successful.pdf}
-    \caption{Successful Music}
+    \caption{Successful Music.}
     \label{fig:Music_s}
   \end{subfigure} 
   \begin{subfigure}[k']{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Music_failed.pdf}
-    \caption{Failed Music}
+    \caption{Failed Music.}
     \label{fig:Music_f}
   \end{subfigure}
   \begin{subfigure}[l]{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Photography_successful.pdf}
-    \caption{Successful Photography}
+    \caption{Successful Photography.}
     \label{fig:Photography_s}
   \end{subfigure} 
   \begin{subfigure}[l']{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Photography_failed.pdf}
-    \caption{Failed Photography}
+    \caption{Failed Photography.}
     \label{fig:Photography_f}
   \end{subfigure}
     \begin{subfigure}[m]{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Publishing_successful.pdf}
-    \caption{Successful Publishing}
+    \caption{Successful Publishing.}
     \label{fig:Publishing_s}
   \end{subfigure} 
   \begin{subfigure}[m']{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Publishing_failed.pdf}
-    \caption{Failed Publishing}
+    \caption{Failed Publishing.}
     \label{fig:Publishing_f}
   \end{subfigure}
     \begin{subfigure}[n]{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Technology_successful.pdf}
-    \caption{Successful Technology}
+    \caption{Successful Technology.}
     \label{fig:Technology_s}
   \end{subfigure} 
   \begin{subfigure}[n']{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Technology_failed.pdf}
-    \caption{Failed Technology}
+    \caption{Failed Technology.}
     \label{fig:Technology_f}
   \end{subfigure}
     \begin{subfigure}[o]{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Theater_successful.pdf}
-    \caption{Successful Theater}
+    \caption{Successful Theater.}
     \label{fig:Theater_s}
   \end{subfigure} 
   \begin{subfigure}[o']{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Theater_failed.pdf}
-    \caption{Failed Theater}
+    \caption{Failed Theater.}
     \label{fig:Theater_f}
   \end{subfigure}
 
@@ -523,7 +524,7 @@ macro avg    &        1.0 &     1.0 &       1.0 &  89490.0 \\
 weighted avg &        1.0 &     1.0 &       1.0 &  89490.0 \\
 \bottomrule
 \end{tabular}
-\caption{Classification report for training set}
+\caption{Classification report for training set.}
 \label{table:model1_tr_cr}
 \end{table}
 
@@ -540,7 +541,7 @@ macro avg    &        1.0 &     1.0 &       1.0 &  33100.0 \\
 weighted avg &        1.0 &     1.0 &       1.0 &  33100.0 \\
 \bottomrule
 \end{tabular}
-\caption{Classification report for test set}
+\caption{Classification report for test set.}
 \label{table:model1_te_cr}
 \end{table}
 
@@ -559,7 +560,7 @@ macro avg    &   0.665901 &  0.609790 &  0.585617 &  89490.000000 \\
 weighted avg &   0.661510 &  0.630272 &  0.595415 &  89490.000000 \\
 \bottomrule
 \end{tabular}
-\caption{Classification report for predictions of the train set using the model trained with shuffled labels}
+\caption{Classification report for predictions of the train set using the model trained with shuffled labels.}
 \label{table:model1_tr_sh_cr}
 \end{table}
 
@@ -574,7 +575,7 @@ weighted avg &   0.661510 &  0.630272 &  0.595415 &  89490.000000 \\
 \bottomrule
 \end{tabular}
 
-\caption{Confusion matrix for predictions of the train set using the model trained with shuffled labels}
+\caption{Confusion matrix for predictions of the train set using the model trained with shuffled labels.}
 \label{table:model1_tr_sh_cm}
 \end{table}
 
@@ -591,7 +592,7 @@ macro avg    &   0.470921 &  0.480994 &  0.440415 &  33100.000000 \\
 weighted avg &   0.474410 &  0.501208 &  0.452975 &  33100.000000 \\
 \bottomrule
 \end{tabular}
-\caption{Classification report for predictions of the test set using the model trained with shuffled labels}
+\caption{Classification report for predictions of the test set using the model trained with shuffled labels.}
 \label{table:model1_te_sh_cr}
 \end{table}
  
@@ -608,7 +609,7 @@ macro avg    &   0.470921 &  0.480994 &  0.440415 &  33100.000000 \\
 weighted avg &   0.474410 &  0.501208 &  0.452975 &  33100.000000 \\
 \bottomrule
 \end{tabular}
-\caption{Confusion matrix for predictions of the test set using the model trained with shuffled labels}
+\caption{Confusion matrix for predictions of the test set using the model trained with shuffled labels.}
 \label{table:model1_te_sh_cm}
 \end{table}
 
@@ -621,22 +622,22 @@ I removed 'spotlight' from the features files and proceed to train a new model.
 \begin{figure}
   \begin{subfigure}[a]{0.5\linewidth}
     \centering\includegraphics[width=\linewidth]{../results/model/xgb_plots/xgbcl1_tree.pdf}
-    \caption{Decision tree plot}
+    \caption{Decision tree plot.}
     \label{fig:tree_spot}
   \end{subfigure}
   \begin{subfigure}[b]{0.5\linewidth}
     \centering\includegraphics[width=\linewidth]{../results/model/xgb_plots/xgbcl1_importance_cover_plot.pdf}
-    \caption{Importance cover plot}
+    \caption{Importance cover plot.}
     \label{fig:cover_spot}
   \end{subfigure}
   \begin{subfigure}[c]{0.5\linewidth}
     \centering\includegraphics[width=\linewidth]{../results/model/xgb_plots/xgbcl1_importance_gain_plot.pdf}
-    \caption{Importance gain plot}
+    \caption{Importance gain plot.}
     \label{fig:gain_spot}
   \end{subfigure}
   \begin{subfigure}[d]{0.5\linewidth}
     \centering\includegraphics[width=\linewidth]{../results/model/xgb_plots/xgbcl1_importance_weight_plot.pdf}
-    \caption{Importance weight plot}
+    \caption{Importance weight plot.}
     \label{fig:weight_spot}
   \end{subfigure}
 \caption{XGBoost built-in model interpretation plots.}
@@ -686,7 +687,7 @@ macro avg    &   0.868874 &  0.870797 &  0.868747 &  89490.000000 \\
 weighted avg &   0.871431 &  0.868924 &  0.869094 &  89490.000000 \\
 \bottomrule
 \end{tabular}
-\caption{Classification report for predictions of the train set using bayesian optimization hyperparameters}
+\caption{Classification report for predictions of the train set using bayesian optimization hyperparameters.}
 \label{table:model_tr_bo_cr}
 \end{table}
 
@@ -701,7 +702,7 @@ weighted avg &   0.871431 &  0.868924 &  0.869094 &  89490.000000 \\
 1 &   7445 &  40523 \\
 \bottomrule
 \end{tabular}
-\caption{Confusion matrix for predictions of the train set using bayesian optimization hyperparameters}
+\caption{Confusion matrix for predictions of the train set using bayesian optimization hyperparameters.}
 \label{table:model_tr_bo_cm}
 \end{table}
 
@@ -718,7 +719,7 @@ macro avg    &   0.861256 &  0.862930 &  0.861234 &  33100.00000 \\
 weighted avg &   0.863450 &  0.861420 &  0.861580 &  33100.00000 \\
 \bottomrule
 \end{tabular}
-\caption{Classification report for predictions of the test set using bayesian optimization hyperparameters}
+\caption{Classification report for predictions of the test set using bayesian optimization hyperparameters.}
 \label{table:model_te_bo_cr}
 \end{table}
  
@@ -732,7 +733,7 @@ weighted avg &   0.863450 &  0.861420 &  0.861580 &  33100.00000 \\
 1 &   2815 &  14862 \\
 \bottomrule
 \end{tabular}
-\caption{Confusion matrix for predictions of the test set using bayesian optimization hyperparameters}
+\caption{Confusion matrix for predictions of the test set using bayesian optimization hyperparameters.}
 \label{table:model_te_bo_cm}
 \end{table}
 
@@ -752,7 +753,7 @@ weighted avg &   0.876955 &  0.873908 &  0.874070 &  89490.000000 \\
 \bottomrule
 \end{tabular}
 
-\caption{Classification report for predictions of the train set using default hyperparameters}
+\caption{Classification report for predictions of the train set using default hyperparameters.}
 \label{table:model_tr_cr}
 \end{table}
 
@@ -766,7 +767,7 @@ weighted avg &   0.876955 &  0.873908 &  0.874070 &  89490.000000 \\
 1 &   7408 &  40560 \\
 \bottomrule
 \end{tabular}
-\caption{Confusion matrix for predictions of the train set using default hyperparameters}
+\caption{Confusion matrix for predictions of the train set using default hyperparameters.}
 \label{table:model_tr_cm}
 \end{table}
 
@@ -783,7 +784,7 @@ macro avg    &   0.864049 &  0.865741 &  0.863785 &  33100.000000 \\
 weighted avg &   0.866453 &  0.863927 &  0.864085 &  33100.000000 \\
 \bottomrule
 \end{tabular}
-\caption{Classification report for predictions of the test set using default hyperparameters}
+\caption{Classification report for predictions of the test set using default hyperparameters.}
 \label{table:model_te_cr}
 \end{table}
  
@@ -797,7 +798,7 @@ weighted avg &   0.866453 &  0.863927 &  0.864085 &  33100.000000 \\
 1 &   2844 &  14833 \\
 \bottomrule
 \end{tabular}
-\caption{Confusion matrix for predictions of the test set using default hyperparameters}
+\caption{Confusion matrix for predictions of the test set using default hyperparameters.}
 \label{table:model_te_cm}
 \end{table}
 
@@ -815,7 +816,7 @@ The implementation is available at {\tt train\_wo\_spotlight.py}.
   \begin{subfigure}{1\linewidth}
     \centering\includegraphics[width=\linewidth]{../results/model/xgb_plots/xgbcl_wo_spot_tree}
   \end{subfigure}
-\caption{Decision tree plot}
+\caption{Decision tree plot.}
 \label{fig:tree}
 \end{figure}
 
@@ -823,19 +824,19 @@ The implementation is available at {\tt train\_wo\_spotlight.py}.
 
   \begin{subfigure}[a]{0.5\linewidth}
     \centering\includegraphics[width=\linewidth]{../results/model/xgb_plots/xgbcl_wo_spot_importance_cover_plot.pdf}
-    \caption{Importance cover plot}
+    \caption{Importance cover plot.}
     \label{fig:cover}
   \end{subfigure}
  
   \begin{subfigure}[b]{0.5\linewidth}
     \centering\includegraphics[width=\linewidth]{../results/model/xgb_plots/xgbcl_wo_spot_importance_weight_plot.pdf}
-    \caption{Importance weight plot}
+    \caption{Importance weight plot.}
     \label{fig:weight}
   \end{subfigure}
   
    \begin{subfigure}[c]{0.5\linewidth}
     \centering\includegraphics[width=\linewidth]{../results/model/xgb_plots/xgbcl_wo_spot_importance_gain_plot.pdf}
-    \caption{Importance gain plot}
+    \caption{Importance gain plot.}
     \label{fig:gain}
   \end{subfigure}
 \caption{XGBoost built-in model interpretation plots.}
@@ -867,7 +868,7 @@ We can also observe that higher values of the profile and frequency scores are a
   \begin{subfigure}{1\linewidth}
     \centering\includegraphics[width=\linewidth]{../results/model/shap_plots/bar_chart_mean_importance_xgbcl_wo_spot_test.pdf}
   \end{subfigure}
-\caption{Mean importance chart}
+\caption{Mean importance chart.}
 \label{fig:shapBar}
 \end{figure}
 
@@ -875,7 +876,7 @@ We can also observe that higher values of the profile and frequency scores are a
   \begin{subfigure}{1\linewidth}
     \centering\includegraphics[width=\linewidth]{../results/model/shap_plots/summary_plot_xgbcl_wo_spot_test.pdf}
   \end{subfigure}
-\caption{Summary plot}
+\caption{Summary plot.}
 \label{fig:shapSummary}
 \end{figure}
 
@@ -883,7 +884,7 @@ We can also observe that higher values of the profile and frequency scores are a
   \begin{subfigure}{1\linewidth}
     \centering\includegraphics[width=\linewidth]{../results/model/important_features_EDA/usd_goal/ylim_usd_goal_state.pdf}
   \end{subfigure}
-\caption{Goal distribution in successful and failed projects}
+\caption{Goal distribution in successful and failed projects.}
 \label{fig:goal}
 \end{figure}
 
@@ -891,7 +892,7 @@ We can also observe that higher values of the profile and frequency scores are a
   \begin{subfigure}{1\linewidth}
     \centering\includegraphics[width=\linewidth]{../results/model/important_features_EDA/profile/profile_state.pdf}
   \end{subfigure}
-\caption{Profile score distribution in successful and failed projects}
+\caption{Profile score distribution in successful and failed projects.}
 \label{fig:profile}
 \end{figure}
 
@@ -899,7 +900,7 @@ We can also observe that higher values of the profile and frequency scores are a
   \begin{subfigure}{1\linewidth}
     \centering\includegraphics[width=\linewidth]{../results/model/important_features_EDA/frequency_score/frequency_score_state.pdf}
   \end{subfigure}
-\caption{Frequency score distribution in successful and failed projects}
+\caption{Frequency score distribution in successful and failed projects.}
 \label{fig:freq}
 \end{figure}
 
@@ -912,33 +913,24 @@ SHAP force plots are representations of feature contribution for individual proj
 \begin{figure}
   \begin{subfigure}{1\linewidth}
     \centering\includegraphics[width=\linewidth]{../results/model/shap_plots/force/force_logit_miscla_xgbcl_wo_spot_test_10146_suc_pred_fail_ret.pdf}
-    \caption{Successful predicted as failed}
+    \caption{Successful predicted as failed.}
 \label{fig:shapforce1}
   \end{subfigure}
   \begin{subfigure}{1\linewidth}
     \centering\includegraphics[width=\linewidth]{../results/model/shap_plots/force/force_logit_miscla_xgbcl_wo_spot_test_121366_fail_pred_suc_ret.pdf}
-    \caption{Failed predicted as successful}
+    \caption{Failed predicted as successful.}
 \label{fig:shapforce2}
   \end{subfigure}
-\caption{Force plots for misclassified projects}
+\caption{Force plots for misclassified projects.}
 \label{fig:shapforce}
 \end{figure}
 
 \end{itemize}
 
-\section{Conclusions}
-\label{sec:conclu}
-\begin{itemize}
+\section{Development}
+\label{sec:dev}
 
-\item Creators should focalize their efforts in their project's profile, because is determinant for the success of their campaign. In future iterations of this project, the generation of more profile related features could help improve the model's performance. Information coded as urls in the JSON encoded variables could be valuable in this context. For example, processing the information contained in the images related to the project, could potentialy increase model accuracy.
-
-\item Keywords were also valuable for the model performance, but might be the source of prediction errors. Other text mining methods could help to mitigate this effect, such as word embedding tecniques. Incorporation of information related to rewards (available at an url) could also be valuable. In addition, contextualizing keywords by combining google trends interest metrics, instagram and, twiter tags in months before and for the duration of a project's crowdfunding could also help to mitigate prediction errors. An evaluation of simultaneuos similar projects might also contribute to reduce errors.
-
-\item Information about creators and their previous projects could also be retrieved and contribute to model performance. 
-
-\end{itemize}
-
-\section{Development tool}
+\subsection{Tools}
 \label{sec:devTools}
 
 The following development tools were employed:
@@ -948,7 +940,53 @@ The following development tools were employed:
 \item Visual Studio Code
 \item iPython and Jupyter Notebooks
 \item LaTeX
-\item A Bash script allowing to reproduce the analysis is available at  {\tt kickstarter.sh}.
+\end{itemize}
+
+\subsection{Implementation of the processing chain}
+\label{sec:chain}
+The project is made of several steps of different nature (such as data minin,g, feature extraction, applying several classifier, and assessment of model, among others). The structure of the code reflects this structure in the form of a processing chain. Each of the steps of the chain is processed by a different Python script, that must be run in the corresponding order. Splitting the whole processes in a chain made of independent modules also helps debugging and eventually maintaining this software due to component isolation\footnote{The opposite case would be a monolithic system with complex interactions between modules, which is clearly harder to debug and maintain because of its inherent complexity.}.
+
+The processing chain is made of the following Python scripts:
+\begin{enumerate}
+\item \textbf{pre\_join.py}
+\item \textbf{pre\_decode\_JSON.py}
+\item \textbf{pre\_deserialized\_to\_one\_hot\_encoding.py}
+\item \textbf{pre\_date\_format\_and\_derived\_variables.py}
+\item \textbf{pre\_currency\_and\_other\_variables.py}
+\item \textbf{pre\_currency\_and\_other\_variables.py}
+\item \textbf{pre\_join\_and\_drop\_live\_state.py}
+\item \textbf{pre\_duplicates.py}
+\item \textbf{pre\_profile\_pruning.py}
+\item \textbf{pre\_category\_name\_pruning.py}
+\item \textbf{pre\_country\_pruning.py}
+\item \textbf{pre\_currency\_pruning.py}
+\item \textbf{pre\_words.py}
+\item \textbf{pre\_split\_train\_test.py}
+\item \textbf{pre\_year\_EDA.py}
+\item \textbf{pre\_data\_prep\_temporal\_and\_classification.py}
+\item \textbf{pre\_text\_mining.py}
+\item \textbf{EDA\_profiling.py}
+\item \textbf{EDA\_tt\_profile.py}
+\item \textbf{pre\_data\_model\_train.py}
+\item \textbf{pre\_data\_model\_test.py}
+\item \textbf{train\_first\_model\_wo\_ts.py}
+\item \textbf{train\_wo\_spotlight.py}
+\item \textbf{SHAP\_error\_evaluation.py}
+\item \textbf{EDA\_features\_important.py}
+\end{enumerate}
+
+Each of these scripts is decribed in its corresponding section in this report.
+
+\section{Conclusions}
+\label{sec:conclu}
+\begin{itemize}
+
+\item Creators should focalize their efforts in their project's profile, because is determinant for the success of their campaign. In future iterations of this project, the generation of more profile related features could help improve the model's performance. Information coded as urls in the JSON encoded variables could be valuable in this context. For example, processing the information contained in the images related to the project, could potentialy increase model accuracy.
+
+\item Keywords were also valuable for the model performance, but might be the source of prediction errors. Other text mining methods could help to mitigate this effect, such as word embedding techniques. Incorporation of information related to rewards (available from a URL) could also be valuable. In addition, contextualizing keywords by combining Google Trends interest metrics, Instagram and, Twitter tags in months before and for the duration of a project's crowdfunding could also help to mitigate prediction errors. An evaluation of simultaneuos similar projects might also contribute to reduce errors.
+
+\item Information about creators and their previous projects could also be retrieved and contribute to model performance. 
+
 \end{itemize}
 
 \bibliographystyle{unsrt} % Sorted references: [1], [2], ..
@@ -958,152 +996,152 @@ The following development tools were employed:
 \begin{figure}
   \begin{subfigure}[a]{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Art_successful.pdf}
-    \caption{Successful Art}
+    \caption{Successful Art.}
     \label{fig:Art_s_test}
   \end{subfigure}
   \begin{subfigure}[a']{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Art_failed.pdf}
-    \caption{Failed Art}
+    \caption{Failed Art.}
     \label{fig:Art_f_test}
   \end{subfigure}
   \begin{subfigure}[b]{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Comics_successful.pdf}
-    \caption{Successful Comics}
+    \caption{Successful Comics.}
     \label{fig:Comic_s_test}
   \end{subfigure} 
   \begin{subfigure}[b']{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Comics_failed.pdf}
-    \caption{Failed Comics}
+    \caption{Failed Comics.}
     \label{fig:Comic_f_test}
   \end{subfigure}
   \begin{subfigure}[c]{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Crafts_successful.pdf}
-    \caption{Successful Crafts}
+    \caption{Successful Crafts.}
     \label{fig:Crafts_s_test}
   \end{subfigure}
     \begin{subfigure}[c']{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Crafts_failed.pdf}
-    \caption{Failed Crafts}
+    \caption{Failed Crafts.}
     \label{fig:Crafts_f_test}
   \end{subfigure}
     \begin{subfigure}[d]{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Dance_successful.pdf}
-    \caption{Successful Dance}
+    \caption{Successful Dance.}
     \label{fig:Dance_s_test}
   \end{subfigure}
     \begin{subfigure}[d']{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Dance_failed.pdf}
-    \caption{Failed Dance}
+    \caption{Failed Dance.}
     \label{fig:Dance_f_test}
    \end{subfigure}
     \begin{subfigure}[e]{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Design_successful.pdf}
-    \caption{Successful Design}
+    \caption{Successful Design.}
     \label{fig:Design_s_test}
   \end{subfigure} 
   \begin{subfigure}[e']{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Design_failed.pdf}
-    \caption{Failed Design}
+    \caption{Failed Design.}
     \label{fig:Design_f_test}
   \end{subfigure} 
     \begin{subfigure}[f]{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Fashion_successful.pdf}
-    \caption{Successful Fashion}
+    \caption{Successful Fashion.}
     \label{fig:Fashion_s_test}
   \end{subfigure} 
   \begin{subfigure}[f']{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Fashion_failed.pdf}
-    \caption{Failed Fashion}
+    \caption{Failed Fashion.}
     \label{fig:Fashion_f_test}
   \end{subfigure}
     \begin{subfigure}[g]{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Film_Video_successful.pdf}
-    \caption{Successful Film \& Video}
+    \caption{Successful Film \& Video.}
     \label{fig:Film_Video_s_test}
   \end{subfigure} 
   \begin{subfigure}[g']{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Film_Video_failed.pdf}
-    \caption{Failed Film \& Video}
+    \caption{Failed Film \& Video.}
     \label{fig:Film_Video_f_test}
   \end{subfigure}
     \begin{subfigure}[h]{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Food_successful.pdf}
-    \caption{Successful Food}
+    \caption{Successful Food.}
     \label{fig:Food_s_test}
   \end{subfigure} 
   \begin{subfigure}[h']{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Food_failed.pdf}
-    \caption{Failed Food}
+    \caption{Failed Food.}
     \label{fig:Food_f_test}
   \end{subfigure}
     \begin{subfigure}[i]{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Games_successful.pdf}
-    \caption{Successful Games}
+    \caption{Successful Games.}
     \label{fig:Games_s_test}
   \end{subfigure} 
   \begin{subfigure}[i']{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Games_failed.pdf}
-    \caption{Failed Games}
+    \caption{Failed Games.}
     \label{fig:Games_f_test}
   \end{subfigure}
   \begin{subfigure}[j]{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Journalism_successful.pdf}
-    \caption{Successful Journalism}
+    \caption{Successful Journalism.}
     \label{fig:Journalism_s_test}
   \end{subfigure} 
   \begin{subfigure}[j']{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Journalism_failed.pdf}
-    \caption{Failed Journalism}
+    \caption{Failed Journalism.}
     \label{fig:Journalism_f_test}
   \end{subfigure}
   \begin{subfigure}[k]{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Music_successful.pdf}
-    \caption{Successful Music}
+    \caption{Successful Music.}
     \label{fig:Music_s_test}
   \end{subfigure} 
   \begin{subfigure}[k']{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Music_failed.pdf}
-    \caption{Failed Music}
+    \caption{Failed Music.}
     \label{fig:Music_f_test}
   \end{subfigure}
   \begin{subfigure}[l]{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Photography_successful.pdf}
-    \caption{Successful Photography}
+    \caption{Successful Photography.}
     \label{fig:Photography_s_test}
   \end{subfigure} 
   \begin{subfigure}[l']{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Photography_failed.pdf}
-    \caption{Failed Photography}
+    \caption{Failed Photography.}
     \label{fig:Photography_f_test}
   \end{subfigure}
     \begin{subfigure}[m]{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Publishing_successful.pdf}
-    \caption{Successful Publishing}
+    \caption{Successful Publishing.}
     \label{fig:Publishing_s_test}
   \end{subfigure} 
   \begin{subfigure}[m']{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Publishing_failed.pdf}
-    \caption{Failed Publishing}
+    \caption{Failed Publishing.}
     \label{fig:Publishing_f_test}
   \end{subfigure}
     \begin{subfigure}[n]{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Technology_successful.pdf}
-    \caption{Successful Technology}
+    \caption{Successful Technology.}
     \label{fig:Technology_s_test}
   \end{subfigure} 
   \begin{subfigure}[n']{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Technology_failed.pdf}
-    \caption{Failed Technology}
+    \caption{Failed Technology.}
     \label{fig:Technology_f_test}
   \end{subfigure}
     \begin{subfigure}[o]{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Theater_successful.pdf}
-    \caption{Successful Theater}
+    \caption{Successful Theater.}
     \label{fig:Theater_s_test}
   \end{subfigure} 
   \begin{subfigure}[o']{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Theater_failed.pdf}
-    \caption{Failed Theater}
+    \caption{Failed Theater.}
     \label{fig:Theater_f_test}
   \end{subfigure}
 
