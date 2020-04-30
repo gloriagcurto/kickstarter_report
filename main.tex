@@ -289,8 +289,6 @@ JSON-encoded columns (\emph{'category', 'creator', 'location', 'photo', 'profile
     {\tt pre\_data\_prep\_temporal\_and\_classification.py}.
     
     The target variable (state) shows no clear correlation with time, as we can observe in Figure \ref{fig:time}. Moreover, our data are not evenly spaced in time. Therefore, after close examination of our data, I decided to implement a random split of train and test sets using the train\_test\_split functiikit learn model\_selection package, a train size of 73 \% a 37 as random seed. Before spliting, 15 columns were dropped, containing information not available prior to the project's state change. Dimensions of training set are 89490 rows and 97 columns, and dimensions of test set are 33100 rows and 97 columns. 
-    FIG 
-
 	
     \item \textbf{Generation of the frequency score feature}.
     
