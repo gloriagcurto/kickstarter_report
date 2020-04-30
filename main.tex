@@ -34,7 +34,7 @@
 }%
 
 \newcommand{\ToDo}[1]{\textcolor{magenta}{\textbf{[ToDo]} \textbf{#1}}}
-\newcommand{\gloria}[1]{\textcolor{Orange}{[Gloria] {#1}}}
+%\newcommand{\gloria}[1]{\textcolor{Orange}{[Gloria] {#1}}}
 
 
 \title{Classification of Kickstarter's successful or failed projects based on data crawled by a scraper robot (Web Robots)}
@@ -50,10 +50,10 @@
 
 \section{Summary}
 \label{ref:sum}
-The aim of this project is to classify and ultimately predict the success or failure of a kickstarter fund rising campaign based on data monthly crawled from the kickstarter.com web site by a scraper robot (webrobots.io).
+The aim of this project is to classify and ultimately predict the success or failure of a kickstarter fund rising campaign based on data monthly crawled from the kickstarter.com web site by a scraper robot (\url{http://webrobots.io}).
 
 \section{Problem definition and background}
-{Kickstarter is an American corporation with a public benefit status launched in 2009 in the United States. The company initiated its international expansion in 2012. The kickstarter platform is open to backers from anywhere in the world and to creators from many countries \ref{subsec:EDA}.
+Kickstarter is an American corporation with a public benefit status launched in 2009 in the United States. The company initiated its international expansion in 2012. The kickstarter platform is open to backers from anywhere in the world and to creators from many countries.
 
 Kickstarter maintains a global crowdfunding platform focused on creativity. Project creators choose a deadline and a minimum funding goal. If the goal is not met by the deadline, no funds are collected and the project is considered failed. Project backers usually receive rewards in exchange for their pledges.
 Once a project collects enough pledges to bypass the goal before a deadline stablished by the creator, its state changes to successful. Only at that moment pledges are collected from backers. From that point onward, there is no guarantee for project delivery. Kickstarter advises backers to use their own judgment on supporting a project. They also warn project leaders that they could be liable for legal damages from backers for failure to deliver on promises.
@@ -63,7 +63,7 @@ On one hand, from a backer point of view, it would be interesting to have an ana
 \section{Data description and pre-processing}
 \label{sec:data_desc}
 
-Raw data were collected from \url{https://webrobots.io/kickstarter-datasets/} in CSV format.  The downloaded data correspond to a crawl executed on February 13 2020. Raw data are composed by 57 CSV files with 3500 to 4000 rows each. The raw original variables are:
+Raw data were collected from \url{https://webrobots.io/kickstarter-datasets/} in CSV format.  The downloaded data correspond to a crawl executed on February 13 2020. Raw data are composed by 57 CSV files with 3500 to 4000 rows each. See the subsection \ref{subsec:EDA} to access the profile report of the raw data. The raw original variables are:
 \begin{itemize}
 
     \item \textbf{backers\_count}: integer representing how many people supported the project (backers).
@@ -113,14 +113,14 @@ Raw data were collected from \url{https://webrobots.io/kickstarter-datasets/} in
 The following steps were followed to obtain a clean dataset for model training or EDA from raw data.
 \begin{itemize}
     \item \textbf{Join CSV files}.
-Raw data contain ambigous JSON-encoded fields that induce errors while parsing. To avoid those errors, ambigous JSON-encoded containing rows were filtered out while joining data into an unique file (\emph{pre\_join.py}).
+Raw data contain ambigous JSON-encoded fields that induce errors while parsing. To avoid those errors, ambigous JSON-encoded containing rows were filtered out while joining data into an unique file , see {\tt pre\_join.py}.
 
     \item \textbf{Deserialize JSON-encoded columns}.
 Columns and rows with missing information were dropped ("friends", "is\_backing", "is\_starred", "permissions") from raw data before JSON deserialization.
-JSON-encoded columns (\emph{'category', 'creator', 'location', 'photo', 'profile', 'urls'}) were isolated from the rest of raw data and deserialized using a custom made function (\emph{deserialize\_in\_batch}) by means of the json\_normalize method from the pandas package and loads from the json package. The implementation can be accessed at \emph{pre\_decode\_JSON.py}).
+JSON-encoded columns (\emph{'category', 'creator', 'location', 'photo', 'profile', 'urls'}) were isolated from the rest of raw data and deserialized using a custom made function (\emph{deserialize\_in\_batch}) by means of the json\_normalize method from the pandas package and loads from the json package. The implementation is available at {\tt pre\_decode\_JSON.py}).
 
     \item \textbf{Selection and pre-processing of deserialized variables}.
-    The implementation of the following steps can be accessed at \emph{pre\_deserialized\_to\_one\_hot\_encoding.py}.
+    The implementation of the following steps can be accessed at {\tt pre\_deserialized\_to\_one\_hot\_encoding.py}.
     \begin{itemize}
  
         \item Drop category\_slug because it contains partial redundant information with category\_name and category\_parent\_name.
@@ -139,11 +139,11 @@ JSON-encoded columns (\emph{'category', 'creator', 'location', 'photo', 'profile
 
             \item The rest of the profile related columns are going to be coded in a binary choice variable (missing value = 0= , variable contains a project creator provided value =1). The following columns were processed: 'profile\_name', 'profile\_blurb', 'profile\_background\_color', 'profile\_text\_color', 'profile\_link\_background\_color', 'profile\_link\_text\_color', 'profile\_link\_text', 'profile\_link\_url'.
         \end{itemize}
-	\item One hot encoding of categorical variables while keeping the original columns for EDA, see section \ref{subsec:EDA}.
+	\item One hot encoding of categorical variables while keeping the original columns for EDA.
         The variables 'category\_name', 'category\_parent\_name', 'location\_expanded\_country' were codified using pd.get\_dummies and the argument drop\_first was set to True.
    \end{itemize}
    \item \textbf{Change date format and compute date derived variables}.
-    The implementation can be accessed at \emph{pre\_date\_format\_and\_derived\_variables.py}.
+    The implementation is available at {\tt pre\_date\_format\_and\_derived\_variables.py}.
     
     First, date and time coding variables ('created\_at', 'deadline', 'launched\_at', 'state\_changed\_at') in the raw data are in Unix time format and need to be transformed into datetime. The following variables where computed from the original ones: weekday columns for each date variable, month columns for each date variable, year columns for each date variable.
     
@@ -156,7 +156,8 @@ JSON-encoded columns (\emph{'category', 'creator', 'location', 'photo', 'profile
     Date variables were prunned before model training to remove the 'state\_changed\_at' derived ones.
     
     \item \textbf{Currency derived variables pre-processing}.
-    The implementation can be accessed at \emph{pre\_currency\_and\_other\_variables.py}.
+    
+    The implementation is available at {\tt pre\_currency\_and\_other\_variables.py}.
     
     The following original variables were dropped due to redundancies or because they are not informative for the model: 'current\_currency', 'currency\_trailing\_code', 'fx\_rate', 'converted\_pledged\_amount', 'pledged', 'slug', 'usd\_type'.
     
@@ -169,7 +170,8 @@ JSON-encoded columns (\emph{'category', 'creator', 'location', 'photo', 'profile
     The variable currency was dummified using get\_dummies (the original varaible was kept for visualization purpose).
 
     \item \textbf{State pre-processing (target variable)}.
-    The implementation can be accessed at \emph{pre\_currency\_and\_other\_variables.py}.
+    
+    The implementation is available at {\tt pre\_currency\_and\_other\_variables.py}.
     
     State is the target variable for classification. The raw variable is a categorical variable with 5 levels('successful', 'failed', 'live', 'canceled', 'suspended') and  no missing values.
     
@@ -178,30 +180,37 @@ JSON-encoded columns (\emph{'category', 'creator', 'location', 'photo', 'profile
     The variable 'state\_code' was generated by dummification from 'state\_grouped' (failed = 0, successful=1, live=2). There are 114940 successful projects, 84311 failed projects and 6651 live projects.
 
    \item \textbf{Join the JSON decoded variables to the rest of the data}.
-   The implementation can be accessed at \emph{pre\_join\_and\_drop\_live\_state.py}.
+   
+   The implementation is available at {\tt pre\_join\_and\_drop\_live\_state.py}.
    
     \item \textbf{Drop rows corresponding to projects on a "live" state}.
-    The implementation can be accessed at \emph{pre\_join\_and\_drop\_live\_state.py}.
+    
+    The implementation is available at {\tt pre\_join\_and\_drop\_live\_state.py}.
     
     \item \textbf{Evaluate and drop duplicate rows}.
-    The implementation can be accessed at \emph{pre\_duplicates.py}.
+    
+    The implementation is available at {\tt pre\_duplicates.py}.
     21392 duplicate rows were detected and removed before further processing using pandas duplicated and drop\_duplicates functions.
     
     \item \textbf{Drop variables carrying low information}.
+    
     Data dimensions at this processing stage was 177859 rows and 428 columns. In the following scripts I will evaluate the informative potential of different subsets of variables and drop the less informative ones in order to reduce the number of binary encoded columns and reduce the overfitting potential.
     
     \begin{itemize}
 	\item Generation of the variable 'profile'.
-        The implementation can be accessed at \emph{pre\_profile\_pruning.py}.
+	
+        The implementation is available at {\tt pre\_profile\_pruning.py}.
 	
 	'profile' was generated by addition of the following columns: 'profile\_ state', 'profile\_ name', 'profile\_ blurb', 'profile\_ background\_ color']+ df['profile\_ text\_ color', 'profile\_ link\_ background\_ color', 'profile\_ link\_ text\_ color', 'profile\_ link\_ text', 'profile\_ link\_ url', 'profile\_ show\_ feature\_ image', 'profile\_ should\_ show\_ feature\_ image\_ section'. It represents an score accounting for profile completeness. The variables were dropped after the score was computed.
         
 	The number of columns was reduced to 418.
 	
 	\item Category name pruning.
-	The implementation can be accessed at \emph{pre\_category\_name\_pruning.py }.
+	
+	The implementation is available at {\tt pre\_category\_name\_pruning.py }.
 	
 	'category\_name\_ori' encodes 159 subcategories of the 15 parent categories for kickstarter's projects. In order to evaluate the information content of each of these subcategory levels, plots and percentages of successful projects by secondary category were plotted to decide which one hot encoded columns under category\_name to drop. Only categories with a percentage of successful projects of at least 55\% (project success rate for the data is 53\%) that were informative within their parent categories were kept.
+	
 	After verification of plots and percentages, all comic, theater, dance secondary categories contain more successful tha failed projects, see Figure~\ref{fig:countCat}. As they are not more informative than their parent categories, those secondary categories were removed. 
 	
 \begin{figure}
@@ -229,14 +238,14 @@ JSON-encoded columns (\emph{'category', 'creator', 'location', 'photo', 'profile
 	The number of columns was reduced to 304.
 	
         \item Country pruning.
-        The implementation can be accessed at \emph{pre\_country\_pruning.py}.  
+        The implementation is available at {\tt pre\_country\_pruning.py}.  
 	
 	Projects in the dataset come from 198 countries. In order to reduce the number of variables, I performed count plots and percentages of successful projects by country. Only countries with more than 55\% of successful projects and more than 50 projects were kept (United Kingdom, Hong Kong, Japan, Singapore, China, Poland, Israel, Taiwan, Czech Republic, Greece, Indonesia, Argentina, Kenya, Iceland, Ghana, Portugal, Slovenia, Finland).
 	
 	The number of columns was reduced to 125.
 	
 	\item  Currency pruning.
-	The implementation can be accessed at \emph{pre\_currency\_pruning.py }.
+	The implementation is available at {\tt pre\_currency\_pruning.py }.
 	
 	Currency encodes 14 different levels. Count plots and percentages of succesfull projects were computed for tha variable 'currency\_orig'. Currencies with more than 55\% of successful projects were retained (GBP, HKD, SGD, JPY) and compared to the retained countries. All currency levels were dropped because the selected currencies correspond to countries that were already selected and the information was redundant.
 	
@@ -244,7 +253,7 @@ JSON-encoded columns (\emph{'category', 'creator', 'location', 'photo', 'profile
         
     \end{itemize}
     \item \textbf{Drop rows with text in other languages than English}.
-    The implementation can be accessed at \emph{pre\_words.py}.
+    The implementation is available at {\tt pre\_words.py}.
     
     The variables blurb and name contain brief descriptions of the project. In order to obtain valuable information for the model, these text variables are going to be processed to obtain keywords and compute a score due to their presence in the text. Project\'s texts are writen in several languages. Several attempts to translate all text into English were performed using langdetect package. Unfortunately, the quantity of characters to translate was bigger than the established API limits. The estimation of the fees for the translation using the google translate API was 1200~\euro.
     
@@ -255,14 +264,38 @@ JSON-encoded columns (\emph{'category', 'creator', 'location', 'photo', 'profile
     To be able to extract category keywords associated to successful or failed projects, data were splitted in training and test sets at this point.
     
     \item \textbf{Split train and test}.
-    The implementation can be accessed at \emph{pre\_split\_train\_test.py }.
     
-    Before splitting the data in train and test sets, I visualized the projects by year ("state\_changed\_at") and state (FIG). The implementation can be accessed at \emph{pre\_year\_EDA.py} and \emph{pre\_data\_prep\_temporal\_and\_classification.py}. The target variable ( state) shows no clear correlation with time, as we can observe in the plots (FIG) and our data are not evenly spaced. Therefore, after close examination of our data, I decided to implement a random split of train and test sets using the train\_test\_split functiikit learn model\_selection package, a train size of 73 \% a 37 as random seed. Before spliting, 15 columns were dropped, containing information not available prior to the project's state change. Dimensions of training set are 89490 rows and 97 columns, and dimensions of test set are 33100 rows and 97 columns. 
+    The implementation is available at {\tt pre\_split\_train\_test.py }.
+    
+    Before splitting the data in train and test sets, I visualized the projects by year ("state\_changed\_at") and state (see Figure \ref{fig:time}).
+    
+\begin{figure}
+  \begin{subfigure}[a]{0.9\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/nprojects_date_state_change.pdf}
+    \caption{Total, successful and failed projects in time}
+    \label{fig:linetime}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.9\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/variable_pruning_EDA/year/nprojects_year_state.pdf}
+    \caption{Count plot of successful and failed projects by year}
+    \label{fig:countYear}
+    \end{subfigure}
+\caption{Temporal dimension of the target variable}
+\label{fig:time}
+\end{figure}
+
+    The implementation is available at {\tt pre\_year\_EDA.py}  and
+    
+    {\tt pre\_data\_prep\_temporal\_and\_classification.py}.
+    
+    The target variable (state) shows no clear correlation with time, as we can observe in Figure \ref{fig:time}. Moreover, our data are not evenly spaced in time. Therefore, after close examination of our data, I decided to implement a random split of train and test sets using the train\_test\_split functiikit learn model\_selection package, a train size of 73 \% a 37 as random seed. Before spliting, 15 columns were dropped, containing information not available prior to the project's state change. Dimensions of training set are 89490 rows and 97 columns, and dimensions of test set are 33100 rows and 97 columns. 
     FIG 
 
 	
     \item \textbf{Generation of the frequency score feature}.
-    The implementation can be accessed at \emph{pre\_text\_mining.py}.
+    
+    The implementation is available at {\tt pre\_text\_mining.py}.
+    
     Title and descriptions of the project were processed to obtain an score based on word frequencies in succesful and failed projects by principal category ('category\_parent\_name', 15 categories). Word  frequencies were computed using both 'blurb' and 'name' variables on the training set. Punctuation signs were replaced by blank spaces, words were tokenized (word\_tokenize from nltk package), stop words were filtered (stopwords from nltk), and stemmed (PorterStemmer from nltk). Word frequency was computed using FreqDist (nltk package). The frequency score was computed for every project by adding the successful project frequency of every word present in its 'blurb' and 'name' variables and substracting the failed project frequencies. The score was normalized by text lenght.  
 
 \end{itemize}
@@ -271,24 +304,25 @@ JSON-encoded columns (\emph{'category', 'creator', 'location', 'photo', 'profile
 \label{subsec:EDA}
 \begin{itemize}
 
-\item \textbf{Profile reports} generated multiple times during data pre-processing using the pandas profile package (\url{https://pypi.org/project/pandas-profiling/}) to help with data visualization. Raw, train and test data htlm profiling reports can be found at \href{http://gloriagcurto.info}{my professional website} \ToDo{cambiar link}.
+\item \textbf{Profile reports} generated multiple times during data pre-processing using the pandas profile package (\url{https://pypi.org/project/pandas-profiling/}) to help with data visualization. Raw, train and test data htlm profiling reports can be found at \href{http://gloriagcurto.info/EDA_profiles/}{my professional website}.
 
-The implementation can be accessed at \emph{EDA\_profiling.py} and \emph{EDA\_tt\_profile.py }.
+The implementation is available at {\tt EDA\_profiling.py} and {\tt EDA\_tt\_profile.py}.
 
-Pandas profiling \url{gloriagcurto.info/profiling_reports} generates an statistical description of the data and each variable, computes interaction and correlation plots and warns about potential sources of problems such as high correlation, duplicates, high cardinality for categorical variables and skewed or zero containing variables.
-These reports were extremely useful to quickly identify duplicated rows, variables with high numbers of missing values and also non numerical variables present in the train and test sets that are incompatible with XGBoost modeling.
+Pandas profiling generates an statistical description of the data and each variable, computes interaction and correlation plots and warns about potential sources of problems such as high correlation, duplicates, high cardinality for categorical variables and skewed or zero containing variables.
+These reports (available at \url{http://gloriagcurto.info/EDA_profiles}) were extremely useful to quickly identify duplicated rows, variables with high numbers of missing values and also non numerical variables present in the train and test sets that are incompatible with XGBoost modeling.
 
-\item \textbf{Word clouds} were generated from the train and test sets by principal category and successful or failed projects using WordCloud. 
-The implementation can be accessed at \emph{pre\_text\_mining.py}.
+\item \textbf{Word clouds} were generated from the train and test sets by principal category and successful or failed projects using WordCloud.
+
+The implementation is available at {\tt pre\_text\_mining.py}.
 
 Word clouds were representative of each category and sometimes were helpful to identify subcategories with high rates of failed projects (such as food trucks within Food, see Figure \ref{fig:Food_f}). The majority of the most frequent 200 words were shared by successful and failed projects within categories but they also always present especific more frequent words, see Figure \ref{fig:wordclouds} and \ref{fig:wordclouds_test}).
-If we take as an example the Comic word clouds (Figure \ref{fig:Comics_s}, \ref{fig:Comics_f}), we can see that both successful and failed projects contain graphic novel, adventure and comic with aproximatively the same frequency, but horror, fantasy and manga, are overrepresented in the failed projects. At the same time, anthologies, sci fi and girl terms are overrepresented in the succesful projects, suggesting possible differences in the succesful rate of different comic genres.
+If we take as an example the Comic word clouds (Figure \ref{fig:Comic_s}, \ref{fig:Comic_f}), we can see that both successful and failed projects contain graphic novel, adventure and comic with aproximatively the same frequency, but horror, fantasy and manga, are overrepresented in the failed projects. At the same time, anthologies, sci fi and girl terms are overrepresented in the succesful projects, suggesting possible differences in the succesful rate of different comic genres.
 Other words were consistenly found associated to successful projects across categories. This is the case, for example, of enamel pin and hard enamel that were associated to succesful projects from the crafts (Figure \ref{fig:Crafts_s}) and fashion categories (Figure \ref{fig:Fashion_s}), and absent from the 200 most frequent words ( see Figures \ref{fig:Crafts_f} and \ref{fig:Fashion_f}).
 
 For clarity purpose, test set word clouds can be found at the end of the document, see Figure \ref{fig:wordclouds_test}.
 
 Word clouds were useful to understand project dinamics within categories and to evaluate the pertinency of the frecuency score feature. As we can identify trends in the word clouds associated to the target variable, the frequency score could potentialy help increase the evaluation metrics of our model.
-c
+
 \begin{figure}
   \begin{subfigure}[a]{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Art_successful.pdf}
@@ -445,7 +479,7 @@ c
 \label{fig:wordclouds}
 \end{figure}
 
-The rest of data visualization was performed as a guide during data pre-processing (\ToDo{ref figures}) or the interpretation of the model (\ToDo{ref figures}).
+The rest of data visualization was performed as a guide during data pre-processing (see Sections \ref{subsec:data_prepro}, \ref{sec:interp} and Figures \ref{fig:countCat}, \ref{fig:time}, \ref{fig:goal},  \ref{fig:profile}, \ref{fig:freq}).
 
 \end{itemize}
 
@@ -454,7 +488,7 @@ The rest of data visualization was performed as a guide during data pre-processi
 \label{sec:model}
 \begin{itemize}
 \item \textbf{Data processing prior to XGBoost training}
-The implementation can be accessed at \emph{pre\_data\_model\_train.py} and \emph{pre\_data\_model\_test.py}.
+The implementation is available at {\tt pre\_data\_model\_train.py} and {\tt pre\_data\_model\_test.py}.
 First, the target variable in numeric format ('state\_code') was isolated from the features and written to a file.
 Second, non numeric features were identified thanks to the pandas-profiling report and removed. Features were written to a file.
 
@@ -474,7 +508,7 @@ The tree based booster was prefered because of the intuitive interpretation of t
 
 \item \textbf{Model training, first iteration}
 
-The implementation can be accessed at \emph{train\_first\_model\_wo\_ts.py}.
+The implementation is available at {\tt train\_first\_model\_wo\_ts.py}.
 
 As a first attempt to model the data, a XGboost tree bosster classifier was initialized with default parameter and fitted to the training data. Evaluation metrics for predictions using both the training and test set were consistently found to show a score of 1, see tables \ref{table:model1_tr_cr}, \ref{table:model1_te_cr}.
 
@@ -512,7 +546,7 @@ weighted avg &        1.0 &     1.0 &       1.0 &  33100.0 \\
 \label{table:model1_te_cr}
 \end{table}
 
-In order to diagnose the reason behind such a perfect metrics, training set label randomization was performed using shuffle from scikit learn utils package. A new model was fitted with the shuffled labels and predictions for both the training and test sets were evaluated. As shown in tables \ref{table:model1_tr_sh_cr}, \ref{table:model1_te_sh_cr} and in their corresponding confusion matrices  \ref{table:model1_tr_sh_cm}, \ref{table:model1_te_sh_cm}, prediction was randomized after shuffling the labels, as proben by an accuracy of  50\% in predictions for the test set. This results suggest that the perfect scores are not due to overfitting.
+In order to diagnose the reason behind such a perfect metrics, training set label randomization was performed using shuffle from scikit learn utils package. A new model was fitted with the shuffled labels and predictions for both the training and test sets were evaluated. As shown in tables \ref{table:model1_tr_sh_cr}, \ref{table:model1_te_sh_cr} and in their corresponding confusion matrices  \ref{table:model1_tr_sh_cm}, \ref{table:model1_te_sh_cm}, predictions were randomized after shuffling the labels, as proben by an accuracy of  50\% in predictions for the test set. These results suggest that the perfect scores are not due to overfitting.
  
 \begin{table}[h!]
 \centering
@@ -580,7 +614,7 @@ weighted avg &   0.474410 &  0.501208 &  0.452975 &  33100.000000 \\
 \label{table:model1_te_sh_cm}
 \end{table}
 
-Tree and importance plots for model interpretation implemented in the XGBoost package solved the mistery, see Figure \ref{fig:xgb_int_spot}. Interpretation plots showed that the decision tree had a unique branch and the predictions were solely based in the value of the feature 'spotlight', that was identified as highly correlated with the target variable by the \href{http://gloriagcurto.info}{pandas-profiling reports} \ToDo{cambiar link}.
+Tree and importance plots for model interpretation implemented in the XGBoost package solved the mistery, see Figure \ref{fig:xgb_int_spot}. Interpretation plots showed that the decision tree had a unique branch and the predictions were solely based in the value of the feature 'spotlight', that was identified as highly correlated with the target variable by the \href{http://gloriagcurto.info/EDA_profiles}{pandas-profiling reports}.
 
 After a search in the kickstater's website, I found a more exact difinition for 'spotlight' that the one provided with the data. Spotlight is a place for the projects on Kickstarter were the creators can communicate their project's progress, after they’ve been successfully funded.
 
@@ -613,7 +647,7 @@ I removed 'spotlight' from the features files and proceed to train a new model.
 
 \item \textbf{Model training, second iteration}
 
-The implementation can be accessed at \emph{train\_wo\_spotlight.py}.
+The implementation is available at {\tt train\_wo\_spotlight.py}.
 
 A bayesian Optimization function for xgboost was defined with the following parameters:
 \begin{itemize}
@@ -704,7 +738,7 @@ weighted avg &   0.863450 &  0.861420 &  0.861580 &  33100.00000 \\
 \label{table:model_te_bo_cm}
 \end{table}
 
-If we compare these classification reports, in tables \ref{table:model_tr_bo_cr}, \ref{table:model_te_bo_cr,} to the ones of a XGBoost classifier with default parameters, in tables, \ref{table:model_tr_cr}, \ref{table:model_te_cr}, we can observe similar metrics. However, the confusion matrices for the default hyperparameters model, see tables \ref{table:model_tr_cm}, \ref{table:model_te_cm}, were slighly better than for the bayesian optimization model, see tables \ref{table:model_tr_bo_cm}, \ref{table:model_te_bo_cm}. Therefore, I decided to save the default parameters model to a file for further exploitation.  The following step was model interpretation.
+If we compare these classification reports, in tables \ref{table:model_tr_bo_cr}, \ref{table:model_te_bo_cr} to the ones of a XGBoost classifier with default parameters, in tables, \ref{table:model_tr_cr}, \ref{table:model_te_cr}, we can observe similar metrics. However, the confusion matrices for the default hyperparameters model, see tables \ref{table:model_tr_cm}, \ref{table:model_te_cm}, were slighly better than for the bayesian optimization model, see tables \ref{table:model_tr_bo_cm}, \ref{table:model_te_bo_cm}. Therefore, I decided to save the default parameters model to a file for further exploitation.  The following step was model interpretation.
 
 \begin{table}[h!]
 \centering
@@ -777,7 +811,7 @@ weighted avg &   0.866453 &  0.863927 &  0.864085 &  33100.000000 \\
 \begin{itemize}
 \item \textbf{XGBoost built-in model interpretation}
 
-The implementation can be accessed at~\emph{train\_wo\_spotlight.py}.
+The implementation is available at {\tt train\_wo\_spotlight.py}.
 
 \begin{figure}
   \begin{subfigure}{1\linewidth}
@@ -810,7 +844,7 @@ The implementation can be accessed at~\emph{train\_wo\_spotlight.py}.
 \label{fig:xgb_int}
 \end{figure}
 
-According to the model's decision tree in Figure \ref{fig:tree}, the first variable that is consider for classification is 'profile', then 'usd\_goal'. If we look at the importance plots (Figure \ref{fig:xgb_int}), we can see that even though 'profile' is always considered, its order of appearance is not conserved. Every importance plot is computed by a different method:
+According to the model's decision tree in Figure \ref{fig:tree}, the first variable that is considered for classification is 'profile', the second is 'usd\_goal'. If we look at the importance plots (Figure \ref{fig:xgb_int}), we can see that even though 'profile' is always important, its order of appearance is not conserved. Differences are due to different methods to compute the importance:
 \begin{itemize}
 
 \item ”weight”: number of times a feature appears in a tree
@@ -820,31 +854,109 @@ According to the model's decision tree in Figure \ref{fig:tree}, the first varia
 \item ”cover”: average coverage of splits which use the feature where coverage is defined as the number of samples affected by the split
 \end{itemize}
 
-These model interpretation plots are not consistent, and conclusions about the contribution of the features to the model are not reliable. In order to obtaint reliability in model interpretation, especially if we want to interpret the contribution of the features to single results , we need a method that is both consistent and accurate. SHAP plots ~\cite{DBLP:journals/corr/LundbergL17, lundberg2020local2global} are then \href{https://towardsdatascience.com/interpretable-machine-learning-with-xgboost-9ec80d148d27}{the ideal choice} .
+These model interpretation plots are not consistent, and conclusions about the contribution of each feature to the model are not reliable. In order to obtaint reliability in model interpretation, especially if we want to interpret the contribution of the features to single results , we need a method that is both consistent and accurate. SHAP plots ~\cite{DBLP:journals/corr/LundbergL17, lundberg2020local2global} are then \href{https://towardsdatascience.com/interpretable-machine-learning-with-xgboost-9ec80d148d27}{the ideal choice}.
 
 \item \textbf{SHAP model interpretation}
 
-The implementation can be accessed at~\emph{SHAP\_error\_evaluation.py}
+The implementation is available at {\tt SHAP\_error\_evaluation.py} and {\tt EDA\_features\_important.py}.
+General SHAP model interpretation plots, such as the bar chart or the summary plot, allow to see wich of the features are contributing to the predictions and their ordering. We can observe in both plots (Figures \ref{fig:shapBar},\ref{fig:shapSummary}, that 4 out of the first seven features were generated during data preprocessing. In particular, the profile and frequency scores make important contributions to the model.
+
+Summary plot (Figure \ref{fig:shapSummary}) also represents how the values of each feature contribute to the classification. We can see, for example, that high economic goals apper to be more frequently associated to failed projects. In fact, if we represent the distribution of 'usd\_goal' in successful or failed projects [Figure \ref{fig:goal}), we can see that succesful projects have economic goals that are centered in lower goal values.
+
+We can also observe that higher values of the profile and frequency scores are associated to successful outcomes, see Figures \ref{fig:profile} and \ref{fig:freq}.
+
+\begin{figure}
+  \begin{subfigure}{1\linewidth}
+    \centering\includegraphics[width=\linewidth]{../results/model/shap_plots/bar_chart_mean_importance_xgbcl_wo_spot_test.pdf}
+  \end{subfigure}
+\caption{Mean importance chart}
+\label{fig:shapBar}
+\end{figure}
+
+\begin{figure}
+  \begin{subfigure}{1\linewidth}
+    \centering\includegraphics[width=\linewidth]{../results/model/shap_plots/summary_plot_xgbcl_wo_spot_test.pdf}
+  \end{subfigure}
+\caption{Summary plot}
+\label{fig:shapSummary}
+\end{figure}
+
+\begin{figure}
+  \begin{subfigure}{1\linewidth}
+    \centering\includegraphics[width=\linewidth]{../results/model/important_features_EDA/usd_goal/ylim_usd_goal_state.pdf}
+  \end{subfigure}
+\caption{Goal distribution in successful and failed projects}
+\label{fig:goal}
+\end{figure}
+
+\begin{figure}
+  \begin{subfigure}{1\linewidth}
+    \centering\includegraphics[width=\linewidth]{../results/model/important_features_EDA/profile/profile_state.pdf}
+  \end{subfigure}
+\caption{Profile score distribution in successful and failed projects}
+\label{fig:profile}
+\end{figure}
+
+\begin{figure}
+  \begin{subfigure}{1\linewidth}
+    \centering\includegraphics[width=\linewidth]{../results/model/important_features_EDA/frequency_score/frequency_score_state.pdf}
+  \end{subfigure}
+\caption{Frequency score distribution in successful and failed projects}
+\label{fig:freq}
+\end{figure}
 
 \item \textbf{Prediction error evaluation using SHAP force plots}
 
-The implementation can be accessed at~\emph{SHAP\_error\_evaluation.py}
+The implementation is available at {\tt SHAP\_error\_evaluation.py}.
 
-\item \textbf{Data visualization to support model interpretation}
+SHAP force plots are representations of feature contribution for individual projects. If we compute force plots for missclassfied projects, we can easily evaluate prediction errors and potentially increase model performance. In fact, the analyzed missclassified projects showed a common pattern (Figures \ref{fig:shapforce1}, \ref{fig:shapforce2}). The analyzed prediction errors were found to have low profile scores and frequency scores that corresponded to the predicted class. Therefore, if this diagnosis holds true after evaluation of a bigger representation of the prdiction errors, we might introduce new features to buffer the predictive power of both scores (see \ref{sec:conclu}).
 
-The implementation can be accessed at~\emph{EDA\_features\_important.py}
-
+\begin{figure}
+  \begin{subfigure}{1\linewidth}
+    \centering\includegraphics[width=\linewidth]{../results/model/shap_plots/force/force_logit_miscla_xgbcl_wo_spot_test_10146_suc_pred_fail_ret.pdf}
+    \caption{Successful predicted as failed}
+\label{fig:shapforce1}
+  \end{subfigure}
+  \begin{subfigure}{1\linewidth}
+    \centering\includegraphics[width=\linewidth]{../results/model/shap_plots/force/force_logit_miscla_xgbcl_wo_spot_test_121366_fail_pred_suc_ret.pdf}
+    \caption{Failed predicted as successful}
+\label{fig:shapforce2}
+  \end{subfigure}
+\caption{Force plots for misclassified projects}
+\label{fig:shapforce}
+\end{figure}
 
 \end{itemize}
+
 \section{Conclusions}
 \label{sec:conclu}
+\begin{itemize}
 
+\item Creators should focalize their efforts in their project's profile, because is determinant for the success of their campaign. In future iterations of this project, the generation of more profile related features could help improve the model's performance. Information coded as urls in the JSON encoded variables could be valuable in this context. For example, processing the information contained in the images related to the project, could potentialy increase model accuracy.
 
+\item Keywords were also valuable for the model performance, but might be the source of prediction errors. Other text mining methods could help to mitigate this effect, such as word embedding tecniques. Incorporation of information related to rewards (available at an url) could also be valuable. In addition, contextualizing keywords by combining google trends interest metrics, instagram and, twiter tags in months before and for the duration of a project's crowdfunding could also help to mitigate prediction errors. An evaluation of simultaneuos similar projects might also contribute to reduce errors.
+
+\item Information about creators and their previous projects could also be retrieved and contribute to model performance. 
+
+\end{itemize}
+
+\section{Development tool}
+\label{sec:devTools}
+
+The following development tools were employed:
+\begin{itemize}
+\item Python
+\item Git and GitHub
+\item Visual Studio Code
+\item iPython and Jupyter Notebooks
+\item LaTeX
+\item A Bash script allowing to reproduce the analysis is available at  {\tt kickstarter.sh}.
+\end{itemize}
 
 \bibliographystyle{unsrt} % Sorted references: [1], [2], ..
 \bibliography{bibliography}
 
-
+% test wordclouds
 \begin{figure}
   \begin{subfigure}[a]{0.2\linewidth}
     \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Art_successful.pdf}
