@@ -9,18 +9,32 @@
 \usepackage{graphicx}
 \usepackage{float} 
 \usepackage{xcolor}
-\usepackage{subfigure}
+%\usepackage{subfigure}
 \usepackage{caption}
 \usepackage{listings} % JSON listing
 \usepackage{eurosym}
 \usepackage{parskip} % Do not indent the beginning of each paragraph
 \usepackage{comment}
 \usepackage{booktabs}
+\usepackage{subcaption}
+\usepackage{hyperref}
+\usepackage[labelformat=parens,labelsep=quad,skip=3pt]{caption}
 
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=orange,      
+    urlcolor=blue,
+}
+\urlstyle{same}
 %\renewcommand{\sectionname}{Lecture} % Redefine "chapter" to a different text
+\usepackage{alphalph}
+\renewcommand*{\thesubfigure}{%
+\alphalph{\value{subfigure}}%
+}%
 
 \newcommand{\ToDo}[1]{\textcolor{magenta}{\textbf{[ToDo]} \textbf{#1}}}
-\newcommand{\gloria}[1]{\textcolor{blue}{[Gloria] {#1}}}
+\newcommand{\gloria}[1]{\textcolor{Orange}{[Gloria] {#1}}}
 
 
 \title{Classification of Kickstarter's successful or failed projects based on data crawled by a scraper robot (Web Robots)}
@@ -188,10 +202,28 @@ JSON-encoded columns (\emph{'category', 'creator', 'location', 'photo', 'profile
 	The implementation can be accessed at \emph{pre\_category\_name\_pruning.py }.
 	
 	'category\_name\_ori' encodes 159 subcategories of the 15 parent categories for kickstarter's projects. In order to evaluate the information content of each of these subcategory levels, plots and percentages of successful projects by secondary category were plotted to decide which one hot encoded columns under category\_name to drop. Only categories with a percentage of successful projects of at least 55\% (project success rate for the data is 53\%) that were informative within their parent categories were kept.
-	After verification of plots and percentages, all comic, theater, dance secondary categories contain more successful tha failed projects (Figure1). As they are not more informative than their parent categories, those secondary categories were removed. 
+	After verification of plots and percentages, all comic, theater, dance secondary categories contain more successful tha failed projects, see Figure~\ref{fig:countCat}. As they are not more informative than their parent categories, those secondary categories were removed. 
 	
-	Figure1 (pdfs: nprojects\_ Comics\_ state.pdf, nprojects\_ Dance\_ state.pdf, nprojects\_ Theater\_ state.pdf)
-	
+\begin{figure}
+  \begin{subfigure}[a]{0.8\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/variable_pruning_EDA/cat_name/nprojects_Comics_state.pdf}
+    \caption{Count plot of successful and failed projects and subcategories of Comics principal category}
+    \label{fig:countCatA}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.8\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/variable_pruning_EDA/cat_name/nprojects_Dance_state.pdf}
+    \caption{Count plot of successful and failed projects and subcategories of Dance principal category}
+    \label{fig:countCatB}
+  \end{subfigure}
+  \begin{subfigure}[c]{0.8\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/variable_pruning_EDA/cat_name/nprojects_Theater_state.pdf}
+    \caption{Count plot of successful and failed projects and subcategories of Dance principal category}
+    \label{fig:countCatC}
+  \end{subfigure}
+\caption{Count plots of successful and failed projects within categories.}
+\label{fig:countCat}
+\end{figure}
+
 	The following subcategories were kept: 'Anthologies', 'Letterpress', "Children's Books", 'Art Books', 'Publishing', 'Literary Spaces', 'Fiction', 'Nonfiction', 'Playing Cards', 'Video Games', 'Tabletop Games', 'Games', 'Puzzles', 'Journalism', 'Public Art', 'Illustration', 'Painting', 'Art', 'Social Practice', 'Shorts', 'Narrative Film', 'Documentary', 'Webseries', 'Film \& Video', 'Crafts', 'Photography', 'Product Design', 'Typography', 'Design', 'Classical Music', 'Country \& Folk', 'Indie Rock', 'Pop', 'Music', 'Jazz', 'Comedy', 'Rock', 'Chiptune', 'Apparel', 'Accessories', 'Fashion', 'Gadgets', 'Hardware', 'Technology'.
 	
 	The number of columns was reduced to 304.
@@ -199,14 +231,14 @@ JSON-encoded columns (\emph{'category', 'creator', 'location', 'photo', 'profile
         \item Country pruning.
         The implementation can be accessed at \emph{pre\_country\_pruning.py}.  
 	
-	Projects in the dataset come from 198 countries. In order to reduce the number of variables, I performed plots and percentages of successful projects by country and counts of projects by country. Only countries with more than 55\% of successful projects and more than 50 projects were kept (United Kingdom, Hong Kong, Japan, Singapore, China, Poland, Israel, Taiwan, Czech Republic, Greece, Indonesia, Argentina, Kenya, Iceland, Ghana, Portugal, Slovenia, Finland).
+	Projects in the dataset come from 198 countries. In order to reduce the number of variables, I performed count plots and percentages of successful projects by country. Only countries with more than 55\% of successful projects and more than 50 projects were kept (United Kingdom, Hong Kong, Japan, Singapore, China, Poland, Israel, Taiwan, Czech Republic, Greece, Indonesia, Argentina, Kenya, Iceland, Ghana, Portugal, Slovenia, Finland).
 	
 	The number of columns was reduced to 125.
 	
 	\item  Currency pruning.
 	The implementation can be accessed at \emph{pre\_currency\_pruning.py }.
 	
-	Currency encodes 14 different levels. Plots and percentages of succesfull projects were performed for 'currency\_orig'. Currencies with more than 55\% of successful projects were retained (GBP, HKD, SGD, JPY) and compared to the retained countries. All currency levels were dropped because the selected currencies correspond to countries that were already selected and the information was redundant.
+	Currency encodes 14 different levels. Count plots and percentages of succesfull projects were computed for tha variable 'currency\_orig'. Currencies with more than 55\% of successful projects were retained (GBP, HKD, SGD, JPY) and compared to the retained countries. All currency levels were dropped because the selected currencies correspond to countries that were already selected and the information was redundant.
 	
 	The number of columns was reduced to 112.
         
@@ -239,26 +271,181 @@ JSON-encoded columns (\emph{'category', 'creator', 'location', 'photo', 'profile
 \label{subsec:EDA}
 \begin{itemize}
 
-\item \textbf{Profile reports} generated multiple times during data pre-processing using the pandas profile package (\url{https://pypi.org/project/pandas-profiling/}) to help with data visualization. For clarity purposes, only raw, train and test data htlm profiling reports can be found in annex files.
+\item \textbf{Profile reports} generated multiple times during data pre-processing using the pandas profile package (\url{https://pypi.org/project/pandas-profiling/}) to help with data visualization. Raw, train and test data htlm profiling reports can be found at \href{http://gloriagcurto.info}{my professional website} \ToDo{cambiar link}.
+
 The implementation can be accessed at \emph{EDA\_profiling.py} and \emph{EDA\_tt\_profile.py }.
 
-Pandas profiling generates an statistical description of the data and each variable, computes interaction and correlation plots and warns about potential sources of problems such as high correlation, duplicates, high cardinality for categorical variables and skewed or zero containing variables.
+Pandas profiling \url{gloriagcurto.info/profiling_reports} generates an statistical description of the data and each variable, computes interaction and correlation plots and warns about potential sources of problems such as high correlation, duplicates, high cardinality for categorical variables and skewed or zero containing variables.
 These reports were extremely useful to quickly identify duplicated rows, variables with high numbers of missing values and also non numerical variables present in the train and test sets that are incompatible with XGBoost modeling.
 
 \item \textbf{Word clouds} were generated from the train and test sets by principal category and successful or failed projects using WordCloud. 
 The implementation can be accessed at \emph{pre\_text\_mining.py}.
 
-Word clouds were representative of each category and sometimes were helpful to identify subcategories with high rates of failed projects (such as food trucks within Food, see fig). The majority of the most frequent 200 words were shared by successful and failed projects within categories but they also always present especific more frequent words.
-If we take as an example the Comic word clouds, we can see that both successful and failed projects contain graphic novel, adventure and comic with aproximatively the same frequency, but horror, fantasy and manga, are overrepresented in the failed projects. At the same time, anthologies, sci fi and girl terms are overrepresented in the succesful projects, suggesting possible differences in the succesful rate of different comic genres (Figure).
-Other words were consistenly found associated to successful projects across categories. This is the case, for example, of enamel pin and hard enamel that were associated to succesful projects from the crafts and fashion categories, and absent from the 200 most frequent words (FIG).
+Word clouds were representative of each category and sometimes were helpful to identify subcategories with high rates of failed projects (such as food trucks within Food, see Figure \ref{fig:Food_f}). The majority of the most frequent 200 words were shared by successful and failed projects within categories but they also always present especific more frequent words, see Figure \ref{fig:wordclouds} and \ref{fig:wordclouds_test}).
+If we take as an example the Comic word clouds (Figure \ref{fig:Comics_s}, \ref{fig:Comics_f}), we can see that both successful and failed projects contain graphic novel, adventure and comic with aproximatively the same frequency, but horror, fantasy and manga, are overrepresented in the failed projects. At the same time, anthologies, sci fi and girl terms are overrepresented in the succesful projects, suggesting possible differences in the succesful rate of different comic genres.
+Other words were consistenly found associated to successful projects across categories. This is the case, for example, of enamel pin and hard enamel that were associated to succesful projects from the crafts (Figure \ref{fig:Crafts_s}) and fashion categories (Figure \ref{fig:Fashion_s}), and absent from the 200 most frequent words ( see Figures \ref{fig:Crafts_f} and \ref{fig:Fashion_f}).
 
-For clarity purpose, test set word clouds can be found as an annex (annex1).
+For clarity purpose, test set word clouds can be found at the end of the document, see Figure \ref{fig:wordclouds_test}.
 
 Word clouds were useful to understand project dinamics within categories and to evaluate the pertinency of the frecuency score feature. As we can identify trends in the word clouds associated to the target variable, the frequency score could potentialy help increase the evaluation metrics of our model.
+c
+\begin{figure}
+  \begin{subfigure}[a]{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Art_successful.pdf}
+    \caption{Successful Art}
+    \label{fig:Art_s}
+  \end{subfigure}
+  \begin{subfigure}[a']{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Art_failed.pdf}
+    \caption{Failed Art}
+    \label{fig:Art_f}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Comics_successful.pdf}
+    \caption{Successful Comics}
+    \label{fig:Comic_s}
+  \end{subfigure} 
+  \begin{subfigure}[b']{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Comics_failed.pdf}
+    \caption{Failed Comics}
+    \label{fig:Comic_f}
+  \end{subfigure}
+  \begin{subfigure}[c]{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Crafts_successful.pdf}
+    \caption{Successful Crafts}
+    \label{fig:Crafts_s}
+  \end{subfigure}
+    \begin{subfigure}[c']{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Crafts_failed.pdf}
+    \caption{Failed Crafts}
+    \label{fig:Crafts_f}
+  \end{subfigure}
+    \begin{subfigure}[d]{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Dance_successful.pdf}
+    \caption{Successful Dance}
+    \label{fig:Dance_s}
+  \end{subfigure}
+    \begin{subfigure}[d']{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Dance_failed.pdf}
+    \caption{Failed Dance}
+    \label{fig:Dance_f}
+   \end{subfigure}
+    \begin{subfigure}[e]{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Design_successful.pdf}
+    \caption{Successful Design}
+    \label{fig:Design_s}
+  \end{subfigure} 
+  \begin{subfigure}[e']{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Design_failed.pdf}
+    \caption{Failed Design}
+    \label{fig:Design_f}
+  \end{subfigure} 
+    \begin{subfigure}[f]{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Fashion_successful.pdf}
+    \caption{Successful Fashion}
+    \label{fig:Fashion_s}
+  \end{subfigure} 
+  \begin{subfigure}[f']{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Fashion_failed.pdf}
+    \caption{Failed Fashion}
+    \label{fig:Fashion_f}
+  \end{subfigure}
+    \begin{subfigure}[g]{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Film_Video_successful.pdf}
+    \caption{Successful Film \& Video}
+    \label{fig:Film_Video_s}
+  \end{subfigure} 
+  \begin{subfigure}[g']{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Film_Video_failed.pdf}
+    \caption{Failed Film \& Video}
+    \label{fig:Film_Video_f}
+  \end{subfigure}
+    \begin{subfigure}[h]{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Food_successful.pdf}
+    \caption{Successful Food}
+    \label{fig:Food_s}
+  \end{subfigure} 
+  \begin{subfigure}[h']{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Food_failed.pdf}
+    \caption{Failed Food}
+    \label{fig:Food_f}
+  \end{subfigure}
+    \begin{subfigure}[i]{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Games_successful.pdf}
+    \caption{Successful Games}
+    \label{fig:Games_s}
+  \end{subfigure} 
+  \begin{subfigure}[i']{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Games_failed.pdf}
+    \caption{Failed Games}
+    \label{fig:Games_f}
+  \end{subfigure}
+  \begin{subfigure}[j]{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Journalism_successful.pdf}
+    \caption{Successful Journalism}
+    \label{fig:Journalism_s}
+  \end{subfigure} 
+  \begin{subfigure}[j']{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Journalism_failed.pdf}
+    \caption{Failed Journalism}
+    \label{fig:Journalism_f}
+  \end{subfigure}
+  \begin{subfigure}[k]{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Music_successful.pdf}
+    \caption{Successful Music}
+    \label{fig:Music_s}
+  \end{subfigure} 
+  \begin{subfigure}[k']{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Music_failed.pdf}
+    \caption{Failed Music}
+    \label{fig:Music_f}
+  \end{subfigure}
+  \begin{subfigure}[l]{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Photography_successful.pdf}
+    \caption{Successful Photography}
+    \label{fig:Photography_s}
+  \end{subfigure} 
+  \begin{subfigure}[l']{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Photography_failed.pdf}
+    \caption{Failed Photography}
+    \label{fig:Photography_f}
+  \end{subfigure}
+    \begin{subfigure}[m]{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Publishing_successful.pdf}
+    \caption{Successful Publishing}
+    \label{fig:Publishing_s}
+  \end{subfigure} 
+  \begin{subfigure}[m']{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Publishing_failed.pdf}
+    \caption{Failed Publishing}
+    \label{fig:Publishing_f}
+  \end{subfigure}
+    \begin{subfigure}[n]{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Technology_successful.pdf}
+    \caption{Successful Technology}
+    \label{fig:Technology_s}
+  \end{subfigure} 
+  \begin{subfigure}[n']{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Technology_failed.pdf}
+    \caption{Failed Technology}
+    \label{fig:Technology_f}
+  \end{subfigure}
+    \begin{subfigure}[o]{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Theater_successful.pdf}
+    \caption{Successful Theater}
+    \label{fig:Theater_s}
+  \end{subfigure} 
+  \begin{subfigure}[o']{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_train_Theater_failed.pdf}
+    \caption{Failed Theater}
+    \label{fig:Theater_f}
+  \end{subfigure}
 
-FIG only with train
+\caption{Wordclouds of successful and failed projects by principal category in the training set.}
+\label{fig:wordclouds}
+\end{figure}
 
-The rest of data visualization was performed as a guide during data pre-processing (ref figures) or the interpretation of the model (ref figures).
+The rest of data visualization was performed as a guide during data pre-processing (\ToDo{ref figures}) or the interpretation of the model (\ToDo{ref figures}).
 
 \end{itemize}
 
@@ -393,11 +580,36 @@ weighted avg &   0.474410 &  0.501208 &  0.452975 &  33100.000000 \\
 \label{table:model1_te_sh_cm}
 \end{table}
 
-Tree and importance plots for model interpretation implemented in the XGBoost package solved the mistery. Interpretation plots showed that the decision tree had a unique branch and the predictions were solely based in the value of the feature 'spotlight', that was identified as highly correlated with the target variable by the pandas-profiling reports. FIG
+Tree and importance plots for model interpretation implemented in the XGBoost package solved the mistery, see Figure \ref{fig:xgb_int_spot}. Interpretation plots showed that the decision tree had a unique branch and the predictions were solely based in the value of the feature 'spotlight', that was identified as highly correlated with the target variable by the \href{http://gloriagcurto.info}{pandas-profiling reports} \ToDo{cambiar link}.
 
 After a search in the kickstater's website, I found a more exact difinition for 'spotlight' that the one provided with the data. Spotlight is a place for the projects on Kickstarter were the creators can communicate their project's progress, after they’ve been successfully funded.
 
-I removed 'spotlight' from the features files and proceed to train a new model
+I removed 'spotlight' from the features files and proceed to train a new model.
+
+\begin{figure}
+  \begin{subfigure}[a]{0.5\linewidth}
+    \centering\includegraphics[width=\linewidth]{../results/model/xgb_plots/xgbcl1_tree.pdf}
+    \caption{Decision tree plot}
+    \label{fig:tree_spot}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.5\linewidth}
+    \centering\includegraphics[width=\linewidth]{../results/model/xgb_plots/xgbcl1_importance_cover_plot.pdf}
+    \caption{Importance cover plot}
+    \label{fig:cover_spot}
+  \end{subfigure}
+  \begin{subfigure}[c]{0.5\linewidth}
+    \centering\includegraphics[width=\linewidth]{../results/model/xgb_plots/xgbcl1_importance_gain_plot.pdf}
+    \caption{Importance gain plot}
+    \label{fig:gain_spot}
+  \end{subfigure}
+  \begin{subfigure}[d]{0.5\linewidth}
+    \centering\includegraphics[width=\linewidth]{../results/model/xgb_plots/xgbcl1_importance_weight_plot.pdf}
+    \caption{Importance weight plot}
+    \label{fig:weight_spot}
+  \end{subfigure}
+\caption{XGBoost built-in model interpretation plots.}
+\label{fig:xgb_int_spot}
+\end{figure}
 
 \item \textbf{Model training, second iteration}
 
@@ -567,6 +779,49 @@ weighted avg &   0.866453 &  0.863927 &  0.864085 &  33100.000000 \\
 
 The implementation can be accessed at~\emph{train\_wo\_spotlight.py}.
 
+\begin{figure}
+  \begin{subfigure}{1\linewidth}
+    \centering\includegraphics[width=\linewidth]{../results/model/xgb_plots/xgbcl_wo_spot_tree}
+  \end{subfigure}
+\caption{Decision tree plot}
+\label{fig:tree}
+\end{figure}
+
+\begin{figure}
+
+  \begin{subfigure}[a]{0.5\linewidth}
+    \centering\includegraphics[width=\linewidth]{../results/model/xgb_plots/xgbcl_wo_spot_importance_cover_plot.pdf}
+    \caption{Importance cover plot}
+    \label{fig:cover}
+  \end{subfigure}
+ 
+  \begin{subfigure}[b]{0.5\linewidth}
+    \centering\includegraphics[width=\linewidth]{../results/model/xgb_plots/xgbcl_wo_spot_importance_weight_plot.pdf}
+    \caption{Importance weight plot}
+    \label{fig:weight}
+  \end{subfigure}
+  
+   \begin{subfigure}[c]{0.5\linewidth}
+    \centering\includegraphics[width=\linewidth]{../results/model/xgb_plots/xgbcl_wo_spot_importance_gain_plot.pdf}
+    \caption{Importance gain plot}
+    \label{fig:gain}
+  \end{subfigure}
+\caption{XGBoost built-in model interpretation plots.}
+\label{fig:xgb_int}
+\end{figure}
+
+According to the model's decision tree in Figure \ref{fig:tree}, the first variable that is consider for classification is 'profile', then 'usd\_goal'. If we look at the importance plots (Figure \ref{fig:xgb_int}), we can see that even though 'profile' is always considered, its order of appearance is not conserved. Every importance plot is computed by a different method:
+\begin{itemize}
+
+\item ”weight”: number of times a feature appears in a tree
+
+\item ”gain”: average gain of splits which use the feature
+
+\item ”cover”: average coverage of splits which use the feature where coverage is defined as the number of samples affected by the split
+\end{itemize}
+
+These model interpretation plots are not consistent, and conclusions about the contribution of the features to the model are not reliable. In order to obtaint reliability in model interpretation, especially if we want to interpret the contribution of the features to single results , we need a method that is both consistent and accurate. SHAP plots ~\cite{DBLP:journals/corr/LundbergL17, lundberg2020local2global} are then \href{https://towardsdatascience.com/interpretable-machine-learning-with-xgboost-9ec80d148d27}{the ideal choice} .
+
 \item \textbf{SHAP model interpretation}
 
 The implementation can be accessed at~\emph{SHAP\_error\_evaluation.py}
@@ -584,16 +839,165 @@ The implementation can be accessed at~\emph{EDA\_features\_important.py}
 \section{Conclusions}
 \label{sec:conclu}
 
-\begin{comment}
-\begin{figure}[!ht]
-\centering
-\includegraphics[width=0.8\linewidth]{RRPR_2016/images/architecture/architecture.pdf}
-\caption{IPOL as a modular system.} 
-\label{fig:architecture}
-\end{figure}
-\end{comment}
+
 
 \bibliographystyle{unsrt} % Sorted references: [1], [2], ..
 \bibliography{bibliography}
 
+
+\begin{figure}
+  \begin{subfigure}[a]{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Art_successful.pdf}
+    \caption{Successful Art}
+    \label{fig:Art_s_test}
+  \end{subfigure}
+  \begin{subfigure}[a']{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Art_failed.pdf}
+    \caption{Failed Art}
+    \label{fig:Art_f_test}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Comics_successful.pdf}
+    \caption{Successful Comics}
+    \label{fig:Comic_s_test}
+  \end{subfigure} 
+  \begin{subfigure}[b']{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Comics_failed.pdf}
+    \caption{Failed Comics}
+    \label{fig:Comic_f_test}
+  \end{subfigure}
+  \begin{subfigure}[c]{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Crafts_successful.pdf}
+    \caption{Successful Crafts}
+    \label{fig:Crafts_s_test}
+  \end{subfigure}
+    \begin{subfigure}[c']{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Crafts_failed.pdf}
+    \caption{Failed Crafts}
+    \label{fig:Crafts_f_test}
+  \end{subfigure}
+    \begin{subfigure}[d]{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Dance_successful.pdf}
+    \caption{Successful Dance}
+    \label{fig:Dance_s_test}
+  \end{subfigure}
+    \begin{subfigure}[d']{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Dance_failed.pdf}
+    \caption{Failed Dance}
+    \label{fig:Dance_f_test}
+   \end{subfigure}
+    \begin{subfigure}[e]{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Design_successful.pdf}
+    \caption{Successful Design}
+    \label{fig:Design_s_test}
+  \end{subfigure} 
+  \begin{subfigure}[e']{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Design_failed.pdf}
+    \caption{Failed Design}
+    \label{fig:Design_f_test}
+  \end{subfigure} 
+    \begin{subfigure}[f]{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Fashion_successful.pdf}
+    \caption{Successful Fashion}
+    \label{fig:Fashion_s_test}
+  \end{subfigure} 
+  \begin{subfigure}[f']{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Fashion_failed.pdf}
+    \caption{Failed Fashion}
+    \label{fig:Fashion_f_test}
+  \end{subfigure}
+    \begin{subfigure}[g]{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Film_Video_successful.pdf}
+    \caption{Successful Film \& Video}
+    \label{fig:Film_Video_s_test}
+  \end{subfigure} 
+  \begin{subfigure}[g']{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Film_Video_failed.pdf}
+    \caption{Failed Film \& Video}
+    \label{fig:Film_Video_f_test}
+  \end{subfigure}
+    \begin{subfigure}[h]{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Food_successful.pdf}
+    \caption{Successful Food}
+    \label{fig:Food_s_test}
+  \end{subfigure} 
+  \begin{subfigure}[h']{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Food_failed.pdf}
+    \caption{Failed Food}
+    \label{fig:Food_f_test}
+  \end{subfigure}
+    \begin{subfigure}[i]{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Games_successful.pdf}
+    \caption{Successful Games}
+    \label{fig:Games_s_test}
+  \end{subfigure} 
+  \begin{subfigure}[i']{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Games_failed.pdf}
+    \caption{Failed Games}
+    \label{fig:Games_f_test}
+  \end{subfigure}
+  \begin{subfigure}[j]{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Journalism_successful.pdf}
+    \caption{Successful Journalism}
+    \label{fig:Journalism_s_test}
+  \end{subfigure} 
+  \begin{subfigure}[j']{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Journalism_failed.pdf}
+    \caption{Failed Journalism}
+    \label{fig:Journalism_f_test}
+  \end{subfigure}
+  \begin{subfigure}[k]{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Music_successful.pdf}
+    \caption{Successful Music}
+    \label{fig:Music_s_test}
+  \end{subfigure} 
+  \begin{subfigure}[k']{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Music_failed.pdf}
+    \caption{Failed Music}
+    \label{fig:Music_f_test}
+  \end{subfigure}
+  \begin{subfigure}[l]{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Photography_successful.pdf}
+    \caption{Successful Photography}
+    \label{fig:Photography_s_test}
+  \end{subfigure} 
+  \begin{subfigure}[l']{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Photography_failed.pdf}
+    \caption{Failed Photography}
+    \label{fig:Photography_f_test}
+  \end{subfigure}
+    \begin{subfigure}[m]{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Publishing_successful.pdf}
+    \caption{Successful Publishing}
+    \label{fig:Publishing_s_test}
+  \end{subfigure} 
+  \begin{subfigure}[m']{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Publishing_failed.pdf}
+    \caption{Failed Publishing}
+    \label{fig:Publishing_f_test}
+  \end{subfigure}
+    \begin{subfigure}[n]{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Technology_successful.pdf}
+    \caption{Successful Technology}
+    \label{fig:Technology_s_test}
+  \end{subfigure} 
+  \begin{subfigure}[n']{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Technology_failed.pdf}
+    \caption{Failed Technology}
+    \label{fig:Technology_f_test}
+  \end{subfigure}
+    \begin{subfigure}[o]{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Theater_successful.pdf}
+    \caption{Successful Theater}
+    \label{fig:Theater_s_test}
+  \end{subfigure} 
+  \begin{subfigure}[o']{0.2\linewidth}
+    \centering\includegraphics[width=\linewidth]{../images/wordclouds/wc_test_Theater_failed.pdf}
+    \caption{Failed Theater}
+    \label{fig:Theater_f_test}
+  \end{subfigure}
+
+\caption{Wordclouds of successful and failed projects by principal category in the test set.}
+\label{fig:wordclouds_test}
+\end{figure}
 \end{document}
